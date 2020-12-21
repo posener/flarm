@@ -6,30 +6,37 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/posener/ctxutil"
+	"github.com/posener/flarm/cesium"
 	"github.com/posener/flarm/connections"
 	"github.com/posener/flarm/flarmport"
 	"github.com/posener/flarm/process"
 )
 
 var (
-	port = flag.String("port", "", "Serial port path.")
-	addr = flag.String("addr", ":8080", "Address for HTTP serving.")
-
-	lat  = flag.Float64("lat", 32.578190, "Latitude of station.")
-	long = flag.Float64("long", 35.178741, "Longitude of station.")
-	alt  = flag.Float64("alt", 69, "Altitude of station in meters.")
+	port       = flag.String("port", "", "Serial port path.")
+	addr       = flag.String("addr", ":8080", "Address for HTTP serving.")
+	configPath = flag.String("config", "config.json", "Configuration")
 )
 
-var config struct {
-	Lat  float64
-	Long float64
-	Alt  float64
+var cfg struct {
+	Location struct {
+		Lat  float64
+		Long float64
+		Alt  float64
+	}
+	TimeZone string
+	// FlarmMap is mapping from FLARM ID to aircraft call name.
+	FlarmMap map[string]string
+	Cesium   cesium.Config
 }
 
 func main() {
@@ -40,6 +47,17 @@ func main() {
 		log.Fatalf("Usage: 'port' must be provided.")
 	}
 
+	loadConfig()
+
+	location := time.UTC
+	if tz := cfg.TimeZone; tz != "" {
+		var err error
+		location, err = time.LoadLocation(tz)
+		if err != nil {
+			log.Fatalf("Invalid timezone value %q: %s", tz, err)
+		}
+	}
+
 	flarm, err := flarmport.Open(*port)
 	if err != nil {
 		log.Fatal(err)
@@ -47,10 +65,18 @@ func main() {
 	defer flarm.Close()
 
 	conns := connections.New()
-	srv := &http.Server{Addr: *addr, Handler: conns}
+	cesium, err := cesium.New(cfg.Cesium)
+	if err != nil {
+		log.Fatalf("Failed loading cesium server: %s", err)
+	}
+
+	mux := http.NewServeMux()
+	mux.Handle("/ws", conns)
+	mux.Handle("/", cesium)
+	srv := &http.Server{Addr: *addr, Handler: mux}
 
 	go func() {
-		log.Printf("Serving websocket on ws://%s", *addr)
+		log.Printf("Serving on %s", *addr)
 		err := srv.ListenAndServe()
 		if err != nil {
 			log.Fatalf("Failed serving: %s", err)
@@ -58,9 +84,11 @@ func main() {
 	}()
 
 	p := process.Processor{
-		Lat:  *lat,
-		Long: *long,
-		Alt:  *alt,
+		Lat:      cfg.Location.Lat,
+		Long:     cfg.Location.Long,
+		Alt:      cfg.Location.Alt,
+		IDMap:    cfg.FlarmMap,
+		TimeZone: location,
 	}
 
 	go func() {
@@ -80,4 +108,15 @@ func main() {
 
 	// Shutdown until killed.
 	srv.Shutdown(ctxutil.WithSignal(context.Background(), os.Kill))
+}
+
+func loadConfig() {
+	b, err := ioutil.ReadFile(*configPath)
+	if err != nil {
+		log.Fatalf("Failed reading config: %s", err)
+	}
+	err = json.Unmarshal(b, &cfg)
+	if err != nil {
+		log.Fatalf("Failed parsing config: %s", err)
+	}
 }

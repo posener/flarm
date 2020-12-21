@@ -3,6 +3,7 @@ package process
 import (
 	"log"
 	"math"
+	"time"
 
 	"github.com/posener/flarm/flarmport"
 )
@@ -10,6 +11,8 @@ import (
 type Processor struct {
 	Lat, Long float64
 	Alt       float64
+	TimeZone  *time.Location
+	IDMap     map[string]string
 }
 
 type Object struct {
@@ -22,6 +25,7 @@ type Object struct {
 	// Climb rate in m/s
 	Climb float64
 	Type  string
+	Time  time.Time
 }
 
 func (s Processor) Process(v interface{}) *Object {
@@ -41,39 +45,31 @@ func (s Processor) processPFLAA(e flarmport.TypePFLAA) *Object {
 		log.Println("Ignoring empty ID entry.")
 		return nil
 	}
-	lat, long := add(s.Lat, s.Long, e.RelativeNorth, e.RelativeEast)
+	// Apply ID mapping.
+	if mappedID := s.IDMap[id]; mappedID != "" {
+		id = mappedID
+	}
+	lat, long := add(s.Lat, s.Long, float64(e.RelativeNorth), float64(e.RelativeEast))
 	return &Object{
+		ID:          id,
 		Lat:         lat,
 		Long:        long,
 		Alt:         s.Alt + float64(e.RelativeVertical),
 		Climb:       e.ClimbRate,
 		GroundSpeed: e.GroundSpeed,
 		Type:        e.AircraftType,
-		ID:          id,
+		Time:        time.Now().In(s.TimeZone),
 	}
 }
 
-func add(lat, lng float64, relN, relE int64) (float64, float64) {
+func add(lat, lon float64, relN, relE float64) (float64, float64) {
 	const earthRadius = 6378137
 
-	dr := math.Sqrt(float64(relN*relN+relE*relE)) / earthRadius
+	//Coordinate offsets in radians
+	dLat := relN / earthRadius
+	dLon := relE / (earthRadius * math.Cos(math.Pi*lat/180.0))
 
-	lat1 := (lat * (math.Pi / 180.0))
-	lng1 := (lng * (math.Pi / 180.0))
-
-	lat2_part1 := math.Sin(lat1) * math.Cos(dr)
-	lat2_part2 := math.Cos(lat1) * math.Sin(dr) * float64(relE)
-
-	lat2 := math.Asin(lat2_part1 + lat2_part2)
-
-	lng2_part1 := float64(relN) * math.Sin(dr) * math.Cos(lat1)
-	lng2_part2 := math.Cos(dr) - (math.Sin(lat1) * math.Sin(lat2))
-
-	lng2 := lng1 + math.Atan2(lng2_part1, lng2_part2)
-	lng2 = math.Mod((lng2+3*math.Pi), (2*math.Pi)) - math.Pi
-
-	lat2 = lat2 * (180.0 / math.Pi)
-	lng2 = lng2 * (180.0 / math.Pi)
-
-	return lat2, lng2
+	//OffsetPosition, decimal degrees
+	return lat + dLat*180.0/math.Pi,
+		lon + dLon*180.0/math.Pi
 }

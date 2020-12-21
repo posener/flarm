@@ -70,7 +70,7 @@ func TestOpen(t *testing.T) {
 				TurnRate:         0,
 				GroundSpeed:      44,
 				ClimbRate:        2.8,
-				AircraftType:     "tow / tug plane",
+				AircraftType:     "towplane",
 			},
 		},
 		{

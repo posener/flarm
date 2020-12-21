@@ -173,9 +173,9 @@ func idType(v int64) string {
 func aircraftType(v string) string {
 	switch v {
 	case "1":
-		return "glider / motor glider"
+		return "glider"
 	case "2":
-		return "tow / tug plane"
+		return "towplane"
 	case "3":
 		return "helicopter / rotorcraft"
 	case "4":
