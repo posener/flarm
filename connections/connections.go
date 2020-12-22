@@ -10,27 +10,45 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+const buffer = 100
+
 func New() *Conns {
-	return &Conns{m: map[*websocket.Conn]bool{}}
+	return &Conns{m: map[chan<- *websocket.PreparedMessage]bool{}}
 }
 
 type Conns struct {
-	m map[*websocket.Conn]bool
+	m map[chan<- *websocket.PreparedMessage]bool
 	sync.Mutex
 }
 
 func (c *Conns) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	log.Printf("[%s] New connection", r.RemoteAddr)
 	conn, err := websocket.Upgrade(w, r, nil, 1024, 1024)
 	if err != nil {
-		log.Printf("Failed creating connection from %s: %s", r.RemoteAddr, err)
+		log.Printf("[%s] Failed creating websocket: %s", r.RemoteAddr, err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-	defer c.remove(conn)
+	defer conn.Close()
+	defer log.Printf("[%s] Disconnected", r.RemoteAddr)
 
-	c.add(conn)
+	ch := make(chan *websocket.PreparedMessage, buffer)
+	c.add(ch)
+	defer c.remove(ch)
 
-	<-r.Context().Done() // Wait for client to close the connection.
+	for {
+		select {
+		case v := <-ch:
+			err := conn.WritePreparedMessage(v)
+			if err != nil {
+				log.Printf("[%s] Failed writing to connection: %s", r.RemoteAddr, err)
+				return
+			}
+		case <-r.Context().Done(): // Wait for client to close the connection.
+			log.Printf("[%s] Client closed connection", r.RemoteAddr)
+			return
+		}
+	}
 }
 
 func (c *Conns) Write(data interface{}) {
@@ -46,35 +64,19 @@ func (c *Conns) Write(data interface{}) {
 
 	c.Lock()
 	defer c.Unlock()
-
-	// Write the message to all current connections. Remember all fails writes in order to delete
-	// them later on.
-	fails := map[*websocket.Conn]error{}
-	for w := range c.m {
-		w := w
-		err := w.WritePreparedMessage(p)
-		if err != nil {
-			fails[w] = err
-		}
-	}
-
-	// Delete all stale connections.
-	for w, err := range fails {
-		log.Printf("Removing failed connection: %s: %s", w.RemoteAddr(), err)
-		delete(c.m, w)
+	for ch := range c.m {
+		ch <- p
 	}
 }
 
-func (c *Conns) add(w *websocket.Conn) {
+func (c *Conns) add(ch chan *websocket.PreparedMessage) {
 	c.Lock()
 	defer c.Unlock()
-	log.Printf("New connection: %s", w.RemoteAddr())
-	c.m[w] = true
+	c.m[ch] = true
 }
 
-func (c *Conns) remove(w *websocket.Conn) {
+func (c *Conns) remove(ch chan *websocket.PreparedMessage) {
 	c.Lock()
 	defer c.Unlock()
-	log.Printf("Removed connection: %s", w.RemoteAddr())
-	delete(c.m, w)
+	delete(c.m, ch)
 }
