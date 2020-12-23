@@ -1,12 +1,12 @@
 // Consts from template.
-const cameraLong = {{.Camera.Long}};
-const cameraLat = {{.Camera.Lat}};
-const cameraAlt = {{.Camera.Alt}};
-const cameraHeading = {{.Camera.Heading}};
-const cameraPitch = {{.Camera.Pitch}};
+const cameraLong = {{.Camera.Long }};
+const cameraLat = {{.Camera.Lat }};
+const cameraAlt = {{.Camera.Alt }};
+const cameraHeading = {{.Camera.Heading }};
+const cameraPitch = {{.Camera.Pitch }};
 
-const liveTime = {{.LiveTime}};
-const altFix = {{.AltFix}};
+const liveTime = {{.LiveTime }};
+const altFix = {{.AltFix }};
 
 
 // Your access token can be found at: https://cesium.com/ion/tokens.
@@ -33,7 +33,6 @@ viewer.clock.stopTime = stop.clone();
 viewer.clock.currentTime = start.clone();
 viewer.timeline.zoomTo(start.clone(), stop.clone());
 viewer.clock.shouldAnimate = true; // Start playing the scene.
-
 
 const positionProperty = new Cesium.SampledPositionProperty();
 
@@ -83,13 +82,13 @@ function main() {
         entity.path = new Cesium.PathGraphics({ width: 3 });
 
         // Make the items disappear if they are not available for {{.LiveTime}} seconds.
-        entity.availability = new Cesium.TimeIntervalCollection([ new Cesium.TimeInterval({ start: start, stop: stop }) ]);
-        
+        entity.availability = new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({ start: start, stop: stop })]);
+
         entity.label = {
-            text: `${msg.ID}\n` + 
-                  `Alt: ${msg.Alt}m\n` +
-                  `Speed: ${msg.GroundSpeed}ms/s\n` +
-                  `Vario: ${msg.Climb}m/s`,
+            text: `${msg.ID}\n` +
+                `Alt: ${msg.Alt}m\n` +
+                `Speed: ${msg.GroundSpeed}ms/s\n` +
+                `Vario: ${msg.Climb}m/s`,
             font: '20pt monospace',
             pixelOffset: new Cesium.Cartesian2(0, -50),
             scaleByDistance: new Cesium.NearFarScalar(0.0, 1.0, 1.0e4, 0.2)
@@ -102,3 +101,80 @@ function main() {
     };
 }
 main();
+
+// Allowed flying areas
+viewer.entities.add({
+    position: Cesium.Cartesian3.fromDegrees(35.22903, 32.59705, 70.0),
+    ellipsoid: {
+        radii: new Cesium.Cartesian3(3200.0, 3200.0, 10000.0),
+        minimumClock: Cesium.Math.toRadians(0.0),
+        maximumClock: Cesium.Math.toRadians(-180.0),
+        minimumCone: Cesium.Math.toRadians(90.0),
+        maximumCone: Cesium.Math.toRadians(85.6),
+        material: Cesium.Color.BLACK.withAlpha(0.3),
+    },
+});
+
+viewer.entities.add({
+    position: Cesium.Cartesian3.fromDegrees(35.22903, 32.59705, 70.0),
+    ellipsoid: {
+        radii: new Cesium.Cartesian3(2000.0, 2000.0, 10000.0),
+        minimumClock: Cesium.Math.toRadians(0.0),
+        maximumClock: Cesium.Math.toRadians(180.0),
+        minimumCone: Cesium.Math.toRadians(90.0),
+        maximumCone: Cesium.Math.toRadians(85.6),
+        material: Cesium.Color.BLACK.withAlpha(0.3),
+    },
+});
+
+viewer.entities.add({
+    position: Cesium.Cartesian3.fromDegrees(35.22903, 32.59705, 451.0),
+    plane: {
+        plane: new Cesium.Plane(Cesium.Cartesian3.UNIT_Y, 0.0),
+        dimensions: new Cesium.Cartesian2(6400.0, 762.0),
+        material: Cesium.Color.BLACK.withAlpha(0.3),
+    },
+});
+
+viewer.entities.add({
+    polygon: {
+        hierarchy: {
+            positions: Cesium.Cartesian3.fromDegreesArray([
+                //Lower left corner
+                35.20000,
+                32.58500,
+                //Upper left corner
+                35.20000,
+                32.60000,
+                //Upper right corner
+                35.25000,
+                32.60000,
+                //Lower right corner
+                35.25000,
+                32.58500,
+            ]),
+            holes: [
+                {
+                    positions: Cesium.Cartesian3.fromDegreesArray([
+                        //Lower left corner
+                        35.20500,
+                        32.58900,
+                        //Upper left corner
+                        35.20500,
+                        32.59500,
+                        //Upper right corner
+                        35.24500,
+                        32.59500,
+                        //Lower right corner
+                        35.24500,
+                        32.58900,
+                    ]),
+                },
+            ],
+        },
+        material: Cesium.Color.BLUE.withAlpha(0.05),
+        height: 396.24,
+        extrudedHeight: 346.24,
+        outline: true, // height is required for outline to display
+    },
+});
