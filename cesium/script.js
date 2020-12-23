@@ -25,6 +25,16 @@ viewer.camera.flyTo({
     }
 });
 
+// Set time slider
+const start = Cesium.JulianDate.now(new Cesium.JulianDate());
+const stop = Cesium.JulianDate.addSeconds(start, 60 * 60, new Cesium.JulianDate());
+viewer.clock.startTime = start.clone();
+viewer.clock.stopTime = stop.clone();
+viewer.clock.currentTime = start.clone();
+viewer.timeline.zoomTo(start.clone(), stop.clone());
+viewer.clock.shouldAnimate = true; // Start playing the scene.
+
+
 const positionProperty = new Cesium.SampledPositionProperty();
 
 function model(airplaneType) {
