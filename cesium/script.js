@@ -1,3 +1,14 @@
+// Consts from template.
+const cameraLong = {{.Camera.Long}};
+const cameraLat = {{.Camera.Lat}};
+const cameraAlt = {{.Camera.Alt}};
+const cameraHeading = {{.Camera.Heading}};
+const cameraPitch = {{.Camera.Pitch}};
+
+const liveTime = {{.LiveTime}};
+const altFix = {{.AltFix}};
+
+
 // Your access token can be found at: https://cesium.com/ion/tokens.
 Cesium.Ion.defaultAccessToken = '{{.Token}}';
 // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
@@ -7,14 +18,34 @@ const viewer = new Cesium.Viewer('cesiumContainer', {
 // Add Cesium OSM Buildings, a global 3D buildings layer.
 const buildingTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
 viewer.camera.flyTo({
-    destination: Cesium.Cartesian3.fromDegrees({{.Camera.Long}}, {{.Camera.Lat}}, {{.Camera.Alt}}),
+    destination: Cesium.Cartesian3.fromDegrees(cameraLong, cameraLat, cameraAlt),
     orientation: {
-        heading: Cesium.Math.toRadians({{.Camera.Heading}}),
-        pitch: Cesium.Math.toRadians({{.Camera.Pitch}}),
+        heading: Cesium.Math.toRadians(cameraHeading),
+        pitch: Cesium.Math.toRadians(cameraPitch),
     }
 });
 
 const positionProperty = new Cesium.SampledPositionProperty();
+
+function model(airplaneType) {
+    switch (airplaneType) {
+        case "glider":
+            return new Cesium.ModelGraphics({
+                uri: "/models/glider/scene.gltf",
+                scale: 20,
+            });
+        case "towplane":
+            return new Cesium.ModelGraphics({
+                uri: "/models/towplane/towplane.gltf",
+                allowPicking: 1,
+                scale: 15,
+            });
+        default:
+            return new Cesium.ModelGraphics({
+                uri: "/models/ufo/scene.gltf",
+            });
+    }
+}
 
 function main() {
     if (!("WebSocket" in window)) {
@@ -30,9 +61,9 @@ function main() {
 
     ws.onmessage = function (evt) {
         const msg = JSON.parse(evt.data);
-        const position = Cesium.Cartesian3.fromDegrees(msg.Long, msg.Lat, msg.Alt);
+        const position = Cesium.Cartesian3.fromDegrees(msg.Long, msg.Lat, msg.Alt + altFix);
         const start = Cesium.JulianDate.fromIso8601(msg.Time);
-        const stop = Cesium.JulianDate.addSeconds(start, {{.LiveTime}}, new Cesium.JulianDate());
+        const stop = Cesium.JulianDate.addSeconds(start, liveTime, new Cesium.JulianDate());
         positionProperty.addSample(start, position);
         const id = msg.ID;
 
@@ -53,13 +84,7 @@ function main() {
             pixelOffset: new Cesium.Cartesian2(0, -50),
             scaleByDistance: new Cesium.NearFarScalar(0.0, 1.0, 1.0e4, 0.2)
         };
-        if (msg.Type == "glider") {
-            entity.model = { uri: "/models/glider/scene.gltf"};
-        } else if (msg.Type == "towplane") {
-            entity.model = { uri: "/models/towplane/towplane.glb"};
-        } else {
-            entity.point = { pixelSize: 10, color: Cesium.Color.RED };
-        }
+        entity.model = model(msg.Type)
     };
 
     ws.onclose = function () {
