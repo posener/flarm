@@ -41,17 +41,19 @@ function model(airplaneType) {
         case "glider":
             return new Cesium.ModelGraphics({
                 uri: "/models/glider/scene.gltf",
-                scale: 20,
+                allowPicking: 1,
+                minimumPixelSize : 25,
             });
         case "towplane":
             return new Cesium.ModelGraphics({
                 uri: "/models/towplane/towplane.gltf",
                 allowPicking: 1,
-                scale: 15,
+                minimumPixelSize : 25,
             });
         default:
             return new Cesium.ModelGraphics({
                 uri: "/models/ufo/scene.gltf",
+                allowPicking: 1,
             });
     }
 }
