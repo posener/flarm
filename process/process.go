@@ -18,6 +18,8 @@ type Processor struct {
 type Object struct {
 	ID        string
 	Lat, Long float64
+	// Direction of airplane (In degrees relative to N)
+	Dir int
 	// Altitude in m
 	Alt float64
 	// Ground speed in m/s
@@ -54,6 +56,7 @@ func (s Processor) processPFLAA(e flarmport.TypePFLAA) *Object {
 		ID:          id,
 		Lat:         lat,
 		Long:        long,
+		Dir:         int(e.Track),
 		Alt:         s.Alt + float64(e.RelativeVertical),
 		Climb:       e.ClimbRate,
 		GroundSpeed: e.GroundSpeed,
