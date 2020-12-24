@@ -7,6 +7,7 @@ const cameraPitch = {{.Camera.Pitch }};
 
 const liveTime = {{.LiveTime }};
 const altFix = {{.AltFix }};
+const trailSteps = 20;
 
 
 // Your access token can be found at: https://cesium.com/ion/tokens.
@@ -34,21 +35,19 @@ viewer.clock.currentTime = start.clone();
 viewer.timeline.zoomTo(start.clone(), stop.clone());
 viewer.clock.shouldAnimate = true; // Start playing the scene.
 
-const positionProperty = new Cesium.SampledPositionProperty();
-
 function model(airplaneType) {
     switch (airplaneType) {
         case "glider":
             return new Cesium.ModelGraphics({
                 uri: "/models/glider/scene.gltf",
                 allowPicking: 1,
-                minimumPixelSize : 10,
+                minimumPixelSize: 10,
             });
         case "towplane":
             return new Cesium.ModelGraphics({
                 uri: "/models/towplane/towplane.gltf",
                 allowPicking: 1,
-                minimumPixelSize : 25,
+                minimumPixelSize: 25,
             });
         default:
             return new Cesium.ModelGraphics({
@@ -73,19 +72,33 @@ function main() {
     ws.onmessage = function (evt) {
         const msg = JSON.parse(evt.data);
         const position = Cesium.Cartesian3.fromDegrees(msg.Long, msg.Lat, msg.Alt + altFix);
-        const start = Cesium.JulianDate.fromIso8601(msg.Time);
-        const stop = Cesium.JulianDate.addSeconds(start, liveTime, new Cesium.JulianDate());
-        positionProperty.addSample(start, position);
+        const time = Cesium.JulianDate.fromIso8601(msg.Time);
+        // const stop = Cesium.JulianDate.addSeconds(start, liveTime, new Cesium.JulianDate());
         const id = msg.ID;
 
-        const entity = viewer.entities.getOrCreateEntity(id);
-        entity.description = `${msg.ID}`;
-        entity.position = position;
-        entity.path = new Cesium.PathGraphics({ width: 3 });
+        if (!viewer.entities.getById(id)) {
+            console.log(`Creating ${id}.`);
+            var posProp = new Cesium.SampledPositionProperty();
+            viewer.entities.add({
+                id: id,
+                position: posProp,
+                model: model(msg.Type),
+                description: `${id}`,
+                orientation: new Cesium.VelocityOrientationProperty(posProp),
+                path: new Cesium.PathGraphics({
+                    width: 2,
+                    trailTime: trailSteps,
+                }),
+                availability: new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({
+                    start: start.clone(),
+                    stop: stop.clone(),
+                })]),
+            });
+        }
 
+        const entity = viewer.entities.getById(id);
+        entity.position.addSample(time, position);
         // Make the items disappear if they are not available for {{.LiveTime}} seconds.
-        entity.availability = new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({ start: start, stop: stop })]);
-
         entity.label = {
             text: `${msg.ID}\n` +
                 `Alt: ${msg.Alt}m\n` +
@@ -95,13 +108,13 @@ function main() {
             pixelOffset: new Cesium.Cartesian2(0, -50),
             scaleByDistance: new Cesium.NearFarScalar(0.0, 1.0, 1.0e4, 0.2)
         };
-        entity.model = model(msg.Type)
     };
 
     ws.onclose = function () {
         console.log(`ws disconnected`);
     };
 }
+
 main();
 
 // Allowed flying areas
