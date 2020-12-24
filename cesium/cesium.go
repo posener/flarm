@@ -13,8 +13,6 @@ type Config struct {
 	Token string
 	// Path for Census web templates.
 	Path string
-	// KeepAlive is the number of seconds that a FLARM entry that was not update stays visible.
-	LiveTime int
 	// AltFix paints the objects in this alt diff.
 	AltFix int
 	// Start location

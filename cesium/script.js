@@ -5,7 +5,6 @@ const cameraAlt = {{.Camera.Alt }};
 const cameraHeading = {{.Camera.Heading }};
 const cameraPitch = {{.Camera.Pitch }};
 
-const liveTime = {{.LiveTime }};
 const altFix = {{.AltFix }};
 const trailSteps = 20;
 
@@ -17,7 +16,7 @@ const viewer = new Cesium.Viewer('cesiumContainer', {
     terrainProvider: Cesium.createWorldTerrain()
 });
 // Add Cesium OSM Buildings, a global 3D buildings layer.
-const buildingTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
+viewer.scene.primitives.add(Cesium.createOsmBuildings());
 viewer.camera.flyTo({
     destination: Cesium.Cartesian3.fromDegrees(cameraLong, cameraLat, cameraAlt),
     orientation: {
@@ -28,12 +27,12 @@ viewer.camera.flyTo({
 
 // Set time slider
 const start = Cesium.JulianDate.now(new Cesium.JulianDate());
-const stop = Cesium.JulianDate.addSeconds(start, 60 * 60, new Cesium.JulianDate());
+const stop = Cesium.JulianDate.addSeconds(start, 3 * 60 * 60, new Cesium.JulianDate());
 viewer.clock.startTime = start.clone();
 viewer.clock.stopTime = stop.clone();
 viewer.clock.currentTime = start.clone();
-viewer.timeline.zoomTo(start.clone(), stop.clone());
 viewer.clock.shouldAnimate = true; // Start playing the scene.
+viewer.timeline.zoomTo(start.clone(), stop.clone());
 
 function model(airplaneType) {
     switch (airplaneType) {
@@ -73,7 +72,6 @@ function main() {
         const msg = JSON.parse(evt.data);
         const position = Cesium.Cartesian3.fromDegrees(msg.Long, msg.Lat, msg.Alt + altFix);
         const time = Cesium.JulianDate.fromIso8601(msg.Time);
-        // const stop = Cesium.JulianDate.addSeconds(start, liveTime, new Cesium.JulianDate());
         const id = msg.ID;
 
         if (!viewer.entities.getById(id)) {
@@ -99,7 +97,6 @@ function main() {
 
         const entity = viewer.entities.getById(id);
         entity.position.addSample(time, position);
-        // Make the items disappear if they are not available for {{.LiveTime}} seconds.
         entity.label = {
             text: `${msg.ID}\n` +
                 `Alt: ${msg.Alt}m\n` +
