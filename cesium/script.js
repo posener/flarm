@@ -188,7 +188,6 @@ viewer.entities.add({
         material: Cesium.Color.BLUE.withAlpha(0.05),
         height: 396.24,
         extrudedHeight: 346.24,
-        outline: true, // height is required for outline to display
     },
 });
 
