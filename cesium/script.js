@@ -7,6 +7,7 @@ const cameraPitch = {{.Camera.Pitch}};
 
 const altFix = {{.AltFix}};
 const pathLength = {{.PathLength}};
+const minGroundSpeed = {{.MinGroundSpeed}};
 
 
 // Your access token can be found at: https://cesium.com/ion/tokens.
@@ -73,6 +74,10 @@ function main() {
         const position = Cesium.Cartesian3.fromDegrees(msg.Long, msg.Lat, msg.Alt + altFix);
         const time = Cesium.JulianDate.fromIso8601(msg.Time);
         const id = msg.ID;
+
+        if (msg.GroundSpeed < minGroundSpeed) {
+            return;
+        }
 
         if (!viewer.entities.getById(id)) {
             console.log(`Creating ${id}.`);

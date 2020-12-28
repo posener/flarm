@@ -1,9 +1,9 @@
 package cesium
 
 import (
-	"html/template"
 	"net/http"
 	"path/filepath"
+	"text/template"
 
 	"github.com/posener/goaction/log"
 )
@@ -17,6 +17,8 @@ type Config struct {
 	AltFix int
 	// PathLength is the number of path steps to show, after which the path is deleted.
 	PathLength int
+	// MinGroundSpeed is the minimum ground speed (in m/s) to show an aircraft.
+	MinGroundSpeed float32
 	// Start location
 	Camera struct {
 		Lat     float64
