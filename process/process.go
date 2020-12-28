@@ -25,9 +25,10 @@ type Object struct {
 	// Ground speed in m/s
 	GroundSpeed int64
 	// Climb rate in m/s
-	Climb float64
-	Type  string
-	Time  time.Time
+	Climb      float64
+	Type       string
+	Time       time.Time
+	AlarmLevel int
 }
 
 func (s Processor) Process(v interface{}) *Object {
@@ -61,6 +62,7 @@ func (s Processor) processPFLAA(e flarmport.TypePFLAA) *Object {
 		Climb:       e.ClimbRate,
 		GroundSpeed: e.GroundSpeed,
 		Type:        e.AircraftType,
+		AlarmLevel:  int(e.AlarmLevel),
 		Time:        time.Now().In(s.TimeZone),
 	}
 }
