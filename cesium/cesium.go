@@ -15,6 +15,8 @@ type Config struct {
 	Path string
 	// AltFix paints the objects in this alt diff.
 	AltFix int
+	// PathLength is the number of path steps to show, after which the path is deleted.
+	PathLength int
 	// Start location
 	Camera struct {
 		Lat     float64

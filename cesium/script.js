@@ -1,12 +1,12 @@
 // Consts from template.
-const cameraLong = {{.Camera.Long }};
-const cameraLat = {{.Camera.Lat }};
-const cameraAlt = {{.Camera.Alt }};
-const cameraHeading = {{.Camera.Heading }};
-const cameraPitch = {{.Camera.Pitch }};
+const cameraLong = {{.Camera.Long}};
+const cameraLat = {{.Camera.Lat}};
+const cameraAlt = {{.Camera.Alt}};
+const cameraHeading = {{.Camera.Heading}};
+const cameraPitch = {{.Camera.Pitch}};
 
-const altFix = {{.AltFix }};
-const trailSteps = 20;
+const altFix = {{.AltFix}};
+const pathLength = {{.PathLength}};
 
 
 // Your access token can be found at: https://cesium.com/ion/tokens.
@@ -85,7 +85,7 @@ function main() {
                 orientation: new Cesium.VelocityOrientationProperty(posProp),
                 path: new Cesium.PathGraphics({
                     width: 2,
-                    trailTime: trailSteps,
+                    trailTime: pathLength,
                     material: new Cesium.ColorMaterialProperty(nextColor()),
                 }),
                 availability: new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({
