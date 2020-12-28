@@ -1,13 +1,13 @@
 // Consts from template.
-const cameraLong = {{.Camera.Long}};
-const cameraLat = {{.Camera.Lat}};
-const cameraAlt = {{.Camera.Alt}};
-const cameraHeading = {{.Camera.Heading}};
-const cameraPitch = {{.Camera.Pitch}};
+const cameraLong = {{.Camera.Long }};
+const cameraLat = {{.Camera.Lat }};
+const cameraAlt = {{.Camera.Alt }};
+const cameraHeading = {{.Camera.Heading }};
+const cameraPitch = {{.Camera.Pitch }};
 
-const altFix = {{.AltFix}};
-const pathLength = {{.PathLength}};
-const minGroundSpeed = {{.MinGroundSpeed}};
+const altFix = {{.AltFix }};
+const pathLength = {{.PathLength }};
+const minGroundSpeed = {{.MinGroundSpeed }};
 
 
 // Your access token can be found at: https://cesium.com/ion/tokens.
@@ -106,7 +106,8 @@ function main() {
             text: `${msg.ID}\n` +
                 `Alt: ${msg.Alt}m\n` +
                 `Speed: ${msg.GroundSpeed}ms/s\n` +
-                `Vario: ${msg.Climb}m/s`,
+                `Vario: ${msg.Climb}m/s\n` +
+                `Heading: ${msg.Dir}°`,
             font: '20pt monospace',
             pixelOffset: new Cesium.Cartesian2(0, -50),
             scaleByDistance: new Cesium.NearFarScalar(0.0, 1.0, 1.0e4, 0.2)
