@@ -90,6 +90,7 @@ function main() {
                 orientation: new Cesium.VelocityOrientationProperty(posProp),
                 path: new Cesium.PathGraphics({
                     width: 2,
+		    leadTime: 0,
                     trailTime: pathLength,
                     material: new Cesium.ColorMaterialProperty(nextColor()),
                 }),
@@ -109,8 +110,10 @@ function main() {
                 `Vario: ${msg.Climb}m/s\n` +
                 `Heading: ${msg.Dir}°`,
             font: '20pt monospace',
+	    fillColor: Cesium.Color.BLACK,
+	    horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
             pixelOffset: new Cesium.Cartesian2(0, -50),
-            scaleByDistance: new Cesium.NearFarScalar(0.0, 1.0, 1.0e4, 0.2)
+            scaleByDistance: new Cesium.NearFarScalar(0.0, 1.0, 1.0e4, 0.4)
         };
     };
 
@@ -196,6 +199,117 @@ viewer.entities.add({
         extrudedHeight: 346.24,
     },
 });
+
+//RAMAT DAVID CTR SHRINKED
+viewer.entities.add({
+  name: "RAMAT DAVID SHRINKED CTR",
+  wall: {
+    positions: Cesium.Cartesian3.fromDegreesArrayHeights([
+                //Turkish Bridge
+                35.10805556,
+		32.72194444,
+		3000.0,
+                //Zarzir
+                35.20861111,
+                32.73083333,
+		3000.0,
+                //Tzomet Adashim
+                35.29222222,
+                32.65861111,
+		3000.0,
+                //Balfouria
+                35.29000000,
+                32.62894444,
+		3000.0,
+		//Ha-Yogev
+		35.20222222,
+		32.61472222,
+		3000.0,
+		//Mishmar Ha-Emeq
+		35.14166667,
+		32.61527778,
+		3000.0,
+		//Hazorea
+		35.12388889,
+		32.64444444,
+		3000.0,
+		//Turkish Bridge
+                35.10805556,
+		32.72194444,
+		3000.0,
+            ]),
+	material: Cesium.Color.RED.withAlpha(0.2),
+	outline: true,
+	outlineColor: Cesium.Color.BLACK,
+  },
+});
+
+//RAMAT DAVID CTR FULL
+viewer.entities.add({
+  name: "RAMAT DAVID CTR",
+  wall: {
+    positions: Cesium.Cartesian3.fromDegreesArrayHeights([
+		//Kfar Hasidim
+		35.09694302,
+		32.75310228,
+		3000.0,
+		//Tzomet Ha-Movil
+		35.23273044,
+		32.75830584,
+		3000.0,
+		//Natzeret
+		35.29716977,
+		32.70076841, 
+		3000.0,
+		//Afula
+		35.29115606,
+		32.60766970,
+		3000.0,
+		//Tzomet Megido
+		35.19188513,
+		32.57285719,
+		3000.0,
+		//Dalia
+		35.09678958,
+		32.58734816,
+		3000.0,
+		//Kfar Hasidim
+		35.09694302,
+		32.75310228,
+		3000.0,
+    ]),
+	material: Cesium.Color.RED.withAlpha(0.2),
+	outline: true,
+	outlineColor: Cesium.Color.BLACK,
+  },
+});
+
+
+//J14
+var orangeOutlined = viewer.entities.add({
+  name:
+    "J14 route",
+  polyline: {
+	positions: Cesium.Cartesian3.fromDegreesArrayHeights([
+		35.05666,
+		32.41138,
+		1219.2,
+		35.25527,
+		32.58555,
+		1219.2,
+		35.54333,
+		32.83638,
+		1219.2,
+    ]),
+	width: 5,
+	material: new Cesium.PolylineOutlineMaterialProperty({
+	color: Cesium.Color.ORANGE,
+	outlineWidth: 2,
+	outlineColor: Cesium.Color.BLACK,
+    }),
+  },
+});
+
 
 const colors = [
     Cesium.Color.ALICEBLUE,
