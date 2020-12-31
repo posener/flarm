@@ -244,6 +244,7 @@ viewer.entities.add({
   },
 });
 
+/*
 //RAMAT DAVID CTR FULL
 viewer.entities.add({
   name: "RAMAT DAVID CTR",
@@ -283,7 +284,7 @@ viewer.entities.add({
 	outlineColor: Cesium.Color.BLACK,
   },
 });
-
+*/
 
 //J14
 var orangeOutlined = viewer.entities.add({
