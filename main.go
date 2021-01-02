@@ -16,9 +16,9 @@ import (
 
 	"github.com/posener/ctxutil"
 	"github.com/posener/flarm/cesium"
-	"github.com/posener/flarm/connections"
 	"github.com/posener/flarm/flarmport"
 	"github.com/posener/flarm/process"
+	"github.com/posener/wsbeam"
 )
 
 var (
@@ -64,7 +64,7 @@ func main() {
 	}
 	defer flarm.Close()
 
-	conns := connections.New()
+	conns := wsbeam.New()
 	cesium, err := cesium.New(cfg.Cesium)
 	if err != nil {
 		log.Fatalf("Failed loading cesium server: %s", err)
@@ -99,7 +99,7 @@ func main() {
 			}
 			entry := p.Process(flarm.Value())
 			if entry != nil {
-				conns.Write(entry)
+				conns.Send(entry)
 			}
 		}
 	}()

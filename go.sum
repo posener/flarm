@@ -40,6 +40,8 @@ github.com/posener/ctxutil v1.0.0/go.mod h1:3tPqqDAPFdtyAfY1WrxcIPFNhp/CuDXxeqyA
 github.com/posener/goaction v0.1.4 h1:9psATzCTZWdd6seavDWqkwpCOnu0jn20kNYnt0o5fFQ=
 github.com/posener/goaction v0.1.4/go.mod h1:aHgsx8Q6UtebZBWRs8JiSCapjNTfPVqB2Mvi+0REtRQ=
 github.com/posener/script v1.1.5/go.mod h1:Rg3ijooqulo05aGLyGsHoLmIOUzHUVK19WVgrYBPU/E=
+github.com/posener/wsbeam v0.0.0-20210102092930-e520c4c04d42 h1:BYjPjVA8vYL9/SI/SjsDsiOO6Vk72XClOKYT9t7Zaqs=
+github.com/posener/wsbeam v0.0.0-20210102092930-e520c4c04d42/go.mod h1:KApT0Jm3UZENXZLbx2v7oESgaTL2VNe6FXUq382dmxU=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
