@@ -13,8 +13,13 @@ const minGroundSpeed = {{.MinGroundSpeed }};
 // Your access token can be found at: https://cesium.com/ion/tokens.
 Cesium.Ion.defaultAccessToken = '{{.Token}}';
 // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
+//
 const viewer = new Cesium.Viewer('cesiumContainer', {
-    terrainProvider: Cesium.createWorldTerrain()
+    terrainProvider: Cesium.createWorldTerrain(),
+    imageryProvider: new Cesium.OpenStreetMapImageryProvider({url : 'https://a.tile.openstreetmap.org/'	}),
+    shadows: true,
+    homeButton: false,	
+    baseLayerPicker : true
 });
 // Add Cesium OSM Buildings, a global 3D buildings layer.
 viewer.scene.primitives.add(Cesium.createOsmBuildings());
