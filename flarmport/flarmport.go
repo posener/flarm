@@ -26,6 +26,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
 
 	"github.com/adrianmo/go-nmea"
 	"github.com/jacobsa/go-serial/serial"
@@ -37,10 +38,6 @@ const baudRate = 19200
 type Port struct {
 	scanner *bufio.Scanner
 	io.Closer
-	// value holds the last read value.
-	value interface{}
-	// err holds the last reading error.
-	err error
 }
 
 // Open opens a serial connection to a given FLARM port.
@@ -68,23 +65,28 @@ func Open(port string) (*Port, error) {
 
 // Next reads and parses the next line in the serial connection. It returns false if the port was
 // closed. The last read value can be retrieved using the `Value` method.
-func (p *Port) Next() bool {
+func (p *Port) Range(f func(interface{})) error {
+	for {
+		value, ok := p.next()
+		if !ok {
+			return nil
+		}
+		if value != nil {
+			f(value)
+		}
+	}
+}
+
+func (p *Port) next() (interface{}, bool) {
 	if !p.scanner.Scan() {
-		return false
+		return nil, false
 	}
 	line := p.scanner.Text()
-	p.value, p.err = nmea.Parse(line)
-	return true
-}
-
-// Value returns the last retrived value from the port.
-func (p *Port) Value() interface{} {
-	return p.value
-}
-
-// Err returns the last reading error.
-func (p *Port) Err() error {
-	return p.err
+	value, err := nmea.Parse(line)
+	if err != nil {
+		log.Printf("Failed parsing %v, ignoring...", line)
+	}
+	return value, true
 }
 
 func splitCR(data []byte, atEOF bool) (advance int, token []byte, err error) {

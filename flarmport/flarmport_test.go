@@ -101,8 +101,9 @@ func TestOpen(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			w.Write([]byte(tt.in + "\n\r"))
-			assert.True(t, flarm.Next())
-			assert.Equal(t, tt.want, clean(flarm.Value()))
+			v, ok := flarm.next()
+			assert.True(t, ok)
+			assert.Equal(t, tt.want, clean(v))
 		})
 	}
 }

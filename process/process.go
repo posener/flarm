@@ -38,6 +38,10 @@ func (s Processor) Process(v interface{}) *Object {
 	switch e := v.(type) {
 	case flarmport.TypePFLAA:
 		return s.processPFLAA(e)
+	case *Object:
+		return e
+	default:
+		log.Printf("Got unexpected type %T", v)
 	}
 	return nil
 }

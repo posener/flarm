@@ -17,12 +17,14 @@ import (
 	"github.com/posener/ctxutil"
 	"github.com/posener/flarm/cesium"
 	"github.com/posener/flarm/flarmport"
+	"github.com/posener/flarm/flarmremote"
 	"github.com/posener/flarm/process"
 	"github.com/posener/wsbeam"
 )
 
 var (
 	port       = flag.String("port", "", "Serial port path.")
+	remote     = flag.String("remote", "", "Remote flarm server to connect to.")
 	addr       = flag.String("addr", ":8080", "Address for HTTP serving.")
 	configPath = flag.String("config", "config.json", "Configuration")
 )
@@ -39,13 +41,14 @@ var cfg struct {
 	Cesium   cesium.Config
 }
 
+type flarmReader interface {
+	Range(func(interface{})) error
+	Close() error
+}
+
 func main() {
 	flag.Parse()
 	ctx := ctxutil.Interrupt()
-
-	if *port == "" {
-		log.Fatalf("Usage: 'port' must be provided.")
-	}
 
 	loadConfig()
 
@@ -58,7 +61,18 @@ func main() {
 		}
 	}
 
-	flarm, err := flarmport.Open(*port)
+	var flarm flarmReader
+	var err error
+	switch {
+	case *port != "" && *remote != "":
+		log.Fatal("Usage: can't provide both 'port' and 'remote'.")
+	default:
+		log.Fatal("Usage: must provide 'port' or 'remote'.")
+	case *port != "":
+		flarm, err = flarmport.Open(*port)
+	case *remote != "":
+		flarm, err = flarmremote.Open(*remote)
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -92,15 +106,16 @@ func main() {
 	}
 
 	go func() {
-		log.Println("Start reading port...")
-		for flarm.Next() {
-			if err := flarm.Err(); err != nil {
-				log.Printf("Unknown format: %v", err)
-			}
-			entry := p.Process(flarm.Value())
+		log.Println("Start reading flarm data...")
+		err := flarm.Range(func(value interface{}) {
+			entry := p.Process(value)
 			if entry != nil {
+				log.Printf("sending %+v", entry)
 				conns.Send(entry)
 			}
+		})
+		if err != nil {
+			log.Fatalf("Failed iterating flarm values: %v", err)
 		}
 	}()
 
