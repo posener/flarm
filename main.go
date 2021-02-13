@@ -39,10 +39,17 @@ var cfg struct {
 	// FlarmMap is mapping from FLARM ID to aircraft call name.
 	FlarmMap map[string]string
 	Cesium   cesium.Config
+	SSL      struct {
+		Cert string
+		Key  string
+	}
 }
 
+// Common interface for flarmport and flarmremote.
 type flarmReader interface {
+	// Range iterates over the values received from the flarm.
 	Range(func(interface{})) error
+	// Close stops reading flarm data.
 	Close() error
 }
 
@@ -91,7 +98,12 @@ func main() {
 
 	go func() {
 		log.Printf("Serving on %s", *addr)
-		err := srv.ListenAndServe()
+		var err error
+		if cfg.SSL.Key != "" && cfg.SSL.Cert != "" {
+			err = srv.ListenAndServeTLS(cfg.SSL.Cert, cfg.SSL.Key)
+		} else {
+			err = srv.ListenAndServe()
+		}
 		if err != nil {
 			log.Fatalf("Failed serving: %s", err)
 		}

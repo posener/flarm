@@ -26,7 +26,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"log"
 
 	"github.com/adrianmo/go-nmea"
 	"github.com/jacobsa/go-serial/serial"
@@ -63,8 +62,7 @@ func Open(port string) (*Port, error) {
 	return &Port{scanner: s, Closer: serial}, nil
 }
 
-// Next reads and parses the next line in the serial connection. It returns false if the port was
-// closed. The last read value can be retrieved using the `Value` method.
+// Range iterates and parses data from the serial connection. It exists when the port is closed.
 func (p *Port) Range(f func(interface{})) error {
 	for {
 		value, ok := p.next()
@@ -77,6 +75,7 @@ func (p *Port) Range(f func(interface{})) error {
 	}
 }
 
+// next used by Range and exist for testing purposes.
 func (p *Port) next() (interface{}, bool) {
 	if !p.scanner.Scan() {
 		return nil, false
@@ -84,7 +83,7 @@ func (p *Port) next() (interface{}, bool) {
 	line := p.scanner.Text()
 	value, err := nmea.Parse(line)
 	if err != nil {
-		log.Printf("Failed parsing %v, ignoring...", line)
+		// Unknown NMEA, ignore...
 	}
 	return value, true
 }

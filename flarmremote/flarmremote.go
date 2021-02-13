@@ -2,14 +2,17 @@ package flarmremote
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/posener/flarm/process"
 )
 
-// Open connects to a remote falrm server, and returns a an object that implements flarmReader..
+// Open connects to a remote flarm server, and returns a an object that implements flarmReader..
 func Open(addr string) (*Conn, error) {
-	d := websocket.Dialer{}
+	d := websocket.Dialer{
+		HandshakeTimeout: time.Second * 10,
+	}
 	conn, _, err := d.Dial(addr, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed dialing %s: %v", addr, err)
