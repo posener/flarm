@@ -40,8 +40,6 @@ func (s Processor) Process(v interface{}) *Object {
 		return s.processPFLAA(e)
 	case *Object:
 		return e
-	default:
-		log.Printf("Got unexpected type %T", v)
 	}
 	return nil
 }
