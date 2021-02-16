@@ -80,6 +80,8 @@ function main() {
         const time = Cesium.JulianDate.fromIso8601(msg.Time);
         const id = msg.ID;
 
+        console.log(`[$(id)] position=$(msg.Long), $(msg.Lat), $(msg.Alt + altFix) time=$(msg.Time)`);
+
         if (msg.GroundSpeed < minGroundSpeed) {
             return;
         }
