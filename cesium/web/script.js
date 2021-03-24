@@ -65,7 +65,7 @@ function model(airplaneType) {
 function main() {
     if (!("WebSocket" in window)) {
         alert("WebSocket NOT supported by your Browser!");
-        return;
+        return false;
     }
 
     var ws = new WebSocket(window.location.origin.replace("http", "ws") + "/ws");
@@ -124,9 +124,17 @@ function main() {
         };
     };
 
-    ws.onclose = function () {
+    ws.onclose = async function () {
         console.log(`ws disconnected`);
+        // Run main again until reconnected.
+        while (true) {
+            await new Promise(r => setTimeout(r, 3000));
+            if (main()) {
+                return;
+            }
+        }
     };
+    return true;
 }
 
 main();
