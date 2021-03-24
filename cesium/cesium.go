@@ -1,12 +1,19 @@
 package cesium
 
 import (
+	"bytes"
+	"embed"
+	"fmt"
+	"io/fs"
+	"log"
 	"net/http"
-	"path/filepath"
 	"text/template"
-
-	"github.com/posener/goaction/log"
 )
+
+//go:embed web/*
+var static embed.FS
+
+var templates = template.Must(template.ParseFS(static, "web/script.js"))
 
 type Config struct {
 	// Token for Censium service.
@@ -30,16 +37,23 @@ type Config struct {
 }
 
 func New(cfg Config) (http.Handler, error) {
-	tmpl, err := template.New("cesium").ParseGlob(filepath.Join(cfg.Path, "script.js"))
+	script := bytes.Buffer{}
+	err := templates.ExecuteTemplate(&script, "script.js", cfg)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error executing template: %s", err)
 	}
+
+	serveDir, err := fs.Sub(static, "web")
+	if err != nil {
+		panic("no subdir 'web' in filesystem.")
+	}
+
 	mux := http.NewServeMux()
-	mux.Handle("/", http.FileServer(http.Dir(cfg.Path)))
+	mux.Handle("/", http.FileServer(http.FS(serveDir)))
 	mux.Handle("/script.js", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		err := tmpl.ExecuteTemplate(w, "script.js", cfg)
+		_, err := w.Write(script.Bytes())
 		if err != nil {
-			log.Printf("Error executing template: %s", err)
+			log.Printf("Failed writing script: %s", err)
 		}
 	}))
 	return mux, nil
