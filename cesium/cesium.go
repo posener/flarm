@@ -3,17 +3,17 @@ package cesium
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
 	"text/template"
 )
 
 //go:embed web/*
-var static embed.FS
-
-var templates = template.Must(template.ParseFS(static, "web/script.js"))
+var embedFS embed.FS
 
 type Config struct {
 	// Token for Censium service.
@@ -37,19 +37,21 @@ type Config struct {
 }
 
 func New(cfg Config) (http.Handler, error) {
+	fsys := unionFS{
+		os.DirFS(cfg.Path),
+		mustSub(embedFS, "web"),
+	}
+
+	templates := template.Must(template.ParseFS(fsys, "script.js"))
+
 	script := bytes.Buffer{}
 	err := templates.ExecuteTemplate(&script, "script.js", cfg)
 	if err != nil {
 		return nil, fmt.Errorf("error executing template: %s", err)
 	}
 
-	serveDir, err := fs.Sub(static, "web")
-	if err != nil {
-		panic("no subdir 'web' in filesystem.")
-	}
-
 	mux := http.NewServeMux()
-	mux.Handle("/", http.FileServer(http.FS(serveDir)))
+	mux.Handle("/", http.FileServer(http.FS(fsys)))
 	mux.Handle("/script.js", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, err := w.Write(script.Bytes())
 		if err != nil {
@@ -59,5 +61,27 @@ func New(cfg Config) (http.Handler, error) {
 	return mux, nil
 }
 
-type Cesium struct {
+// unionFS returns the union of multiple filesystems. When asked for a file it checks each
+// filesystem in the given order until one of them does not return ErrNotExist. In that case the
+// file and error are returned. If all the filesystems returned an ErrNotExist, it will be also
+// returned to the user.
+type unionFS []fs.FS
+
+func (u unionFS) Open(name string) (fs.File, error) {
+	for _, i := range u {
+		f, err := i.Open(name)
+		if !errors.Is(err, fs.ErrNotExist) {
+			return f, err
+		}
+	}
+	return nil, fs.ErrNotExist
+}
+
+// mustSub returns a filesystem in a subdirectory, or panics if directory does not exist.
+func mustSub(f fs.FS, dir string) fs.FS {
+	f, err := fs.Sub(f, dir)
+	if err != nil {
+		panic(fmt.Sprintf("No subdir %q in filesystem.", dir))
+	}
+	return f
 }
