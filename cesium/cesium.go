@@ -27,6 +27,8 @@ type Config struct {
 	PathLength int
 	// MinGroundSpeed is the minimum ground speed (in m/s) to show an aircraft.
 	MinGroundSpeed float32
+	// Units to show. "metric", "imperial" or "mixed"..
+	Units string
 	// Start location
 	Camera struct {
 		Lat     float64
@@ -38,6 +40,9 @@ type Config struct {
 }
 
 func New(cfg Config) (http.Handler, error) {
+	if cfg.Units != "metric" && cfg.Units != "imperial" && cfg.Units != "mixed" {
+		return nil, fmt.Errorf("units want: [metric,imperial,mixed], got: %s", cfg.Units)
+	}
 	mux := http.NewServeMux()
 
 	// Create a handler that holds the unmodified content.

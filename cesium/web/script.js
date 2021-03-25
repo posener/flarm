@@ -8,6 +8,7 @@ const cameraPitch = {{.Camera.Pitch }};
 const altFix = {{.AltFix }};
 const pathLength = {{.PathLength }};
 const minGroundSpeed = {{.MinGroundSpeed }};
+const units = "{{ .Units }}";
 
 
 // Your access token can be found at: https://cesium.com/ion/tokens.
@@ -321,12 +322,37 @@ function main() {
 
         const entity = viewer.entities.getById(id);
         entity.position.addSample(time, position);
+        var text;
+        switch (units) {
+            case "metric":
+                text =
+                    `${msg.ID}\n` +
+                    `Alt: ${msg.Alt}m\n` +
+                    `Speed: ${msg.GroundSpeed}ms/s\n` +
+                    `Vario: ${msg.Climb}m/s\n` +
+                    `Heading: ${msg.Dir}°`;
+                break;
+            case "imperial":
+                text =
+                    `${msg.ID}\n` +
+                    `Alt: ${Math.round(msg.Alt * 0.30484)}ft\n` +
+                    `Speed: ${Math.round(msg.GroundSpeed * 0.514444)}kts\n` +
+                    `Vario: ${Math.round(msg.Climb * 0.514444)}kts\n` +
+                    `Heading: ${msg.Dir}°`;
+                break;
+            case "mixed":
+                text =
+                    `${msg.ID}\n` +
+                    `Alt: ${Math.round(msg.Alt * 0.30484)}ft\n` +
+                    `Speed: ${Math.round(msg.GroundSpeed * 0.514444)}kts\n` +
+                    `Vario: ${msg.Climb}m/s\n` +
+                    `Heading: ${msg.Dir}°`;
+                break;
+            default:
+                console.log(`Unexpected units ${units}`);
+        };
         entity.label = {
-            text: `${msg.ID}\n` +
-                `Alt: ${msg.Alt}m\n` +
-                `Speed: ${msg.GroundSpeed}ms/s\n` +
-                `Vario: ${msg.Climb}m/s\n` +
-                `Heading: ${msg.Dir}°`,
+            text: text,
             font: '20pt monospace',
             fillColor: Cesium.Color.BLACK,
             horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
@@ -345,8 +371,10 @@ function main() {
             }
         }
     };
+
     return true;
-}
+};
+
 
 main();
 
