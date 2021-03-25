@@ -12,9 +12,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"time"
 
-	"github.com/posener/ctxutil"
+	"github.com/posener/flarm/admin"
 	"github.com/posener/flarm/cesium"
 	"github.com/posener/flarm/flarmport"
 	"github.com/posener/flarm/flarmremote"
@@ -55,8 +56,22 @@ type flarmReader interface {
 
 func main() {
 	flag.Parse()
-	ctx := ctxutil.Interrupt()
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
 
+	for ctx.Err() == nil {
+		serve(ctx)
+	}
+
+	<-ctx.Done()
+}
+
+func serve(ctx context.Context) {
+	// Create cancel handler for this context.
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	// Load config in case it was updated.
 	loadConfig()
 
 	location := time.UTC
@@ -73,12 +88,12 @@ func main() {
 	switch {
 	case *port != "" && *remote != "":
 		log.Fatal("Usage: can't provide both 'port' and 'remote'.")
-	default:
-		log.Fatal("Usage: must provide 'port' or 'remote'.")
 	case *port != "":
 		flarm, err = flarmport.Open(*port)
 	case *remote != "":
 		flarm, err = flarmremote.Open(*remote)
+	default:
+		log.Fatal("Usage: must provide 'port' or 'remote'.")
 	}
 	if err != nil {
 		log.Fatal(err)
@@ -91,9 +106,16 @@ func main() {
 		log.Fatalf("Failed loading cesium server: %s", err)
 	}
 
+	adminHandler, err := admin.New(*configPath, cfg, cancel)
+
+	if err != nil {
+		log.Fatalf("Failed loading admin handler: %s", err)
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("/ws", conns)
 	mux.Handle("/", cesium)
+	mux.Handle("/admin", http.StripPrefix("/admin", adminHandler))
 	srv := &http.Server{Addr: *addr, Handler: mux}
 
 	go func() {
@@ -105,7 +127,7 @@ func main() {
 			err = srv.ListenAndServe()
 		}
 		if err != nil {
-			log.Fatalf("Failed serving: %s", err)
+			log.Print(err)
 		}
 	}()
 
@@ -133,8 +155,10 @@ func main() {
 
 	<-ctx.Done()
 
-	// Shutdown until killed.
-	srv.Shutdown(ctxutil.WithSignal(context.Background(), os.Kill))
+	// Gracefully shutdown. Allow 1m for connections to disconnect.
+	ctx, cancel = context.WithTimeout(ctx, time.Minute)
+	defer cancel()
+	srv.Shutdown(ctx)
 }
 
 func loadConfig() {
