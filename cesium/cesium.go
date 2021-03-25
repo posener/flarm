@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"text/template"
 )
 
@@ -37,28 +38,51 @@ type Config struct {
 }
 
 func New(cfg Config) (http.Handler, error) {
-	fsys := unionFS{
-		os.DirFS(cfg.Path),
-		mustSub(embedFS, "web"),
-	}
-
-	templates := template.Must(template.ParseFS(fsys, "script.js"))
-
-	script := bytes.Buffer{}
-	err := templates.ExecuteTemplate(&script, "script.js", cfg)
-	if err != nil {
-		return nil, fmt.Errorf("error executing template: %s", err)
-	}
-
 	mux := http.NewServeMux()
-	mux.Handle("/", http.FileServer(http.FS(fsys)))
-	mux.Handle("/script.js", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, err := w.Write(script.Bytes())
+
+	// Create a handler that holds the unmodified content.
+	unmodifiedFS, err := fs.Sub(embedFS, "web")
+	if err != nil {
+		return nil, fmt.Errorf("no subdir 'web' in filesystem")
+	}
+	err = mount(cfg, mux, "/nomod/", unmodifiedFS)
+	if err != nil {
+		return nil, fmt.Errorf("creating unmodified handler: %s", err)
+	}
+
+	// Create a handler where the static content can be modified according to a given on-disk
+	// content, according to the configured cfg.Path.
+	err = mount(cfg, mux, "/", unionFS{os.DirFS(cfg.Path), unmodifiedFS})
+	if err != nil {
+		return nil, fmt.Errorf("creating modified handler: %s", err)
+	}
+	return mux, nil
+}
+
+// mount returns a web http mount for the given filesystem, updating the script.js according to
+// the given config.
+func mount(cfg Config, mux *http.ServeMux, prefix string, fsys fs.FS) error {
+	templates, err := template.ParseFS(fsys, "script.js")
+	if err != nil {
+		return err
+	}
+
+	// Format the script according to the config.
+	script := bytes.Buffer{}
+	err = templates.ExecuteTemplate(&script, "script.js", cfg)
+	if err != nil {
+		return fmt.Errorf("error executing template: %s", err)
+	}
+	scriptBytes := script.Bytes()
+
+	mux.Handle(prefix, http.StripPrefix(prefix, http.FileServer(http.FS(fsys))))
+	mux.Handle(path.Join(prefix, "script.js"), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, err := w.Write(scriptBytes)
 		if err != nil {
 			log.Printf("Failed writing script: %s", err)
 		}
 	}))
-	return mux, nil
+	return nil
 }
 
 // unionFS returns the union of multiple filesystems. When asked for a file it checks each
@@ -75,13 +99,4 @@ func (u unionFS) Open(name string) (fs.File, error) {
 		}
 	}
 	return nil, fs.ErrNotExist
-}
-
-// mustSub returns a filesystem in a subdirectory, or panics if directory does not exist.
-func mustSub(f fs.FS, dir string) fs.FS {
-	f, err := fs.Sub(f, dir)
-	if err != nil {
-		panic(fmt.Sprintf("No subdir %q in filesystem.", dir))
-	}
-	return f
 }
