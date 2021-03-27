@@ -3,7 +3,6 @@ package cesium
 import (
 	"bytes"
 	"embed"
-	"errors"
 	"fmt"
 	"io/fs"
 	"log"
@@ -11,6 +10,8 @@ import (
 	"os"
 	"path"
 	"text/template"
+
+	"github.com/posener/fsutil"
 )
 
 //go:embed web/*
@@ -57,7 +58,7 @@ func New(cfg Config) (http.Handler, error) {
 
 	// Create a handler where the static content can be modified according to a given on-disk
 	// content, according to the configured cfg.Path.
-	err = mount(cfg, mux, "/", unionFS{os.DirFS(cfg.Path), unmodifiedFS})
+	err = mount(cfg, mux, "/", fsutil.UnionFS{os.DirFS(cfg.Path), unmodifiedFS})
 	if err != nil {
 		return nil, fmt.Errorf("creating modified handler: %s", err)
 	}
@@ -88,20 +89,4 @@ func mount(cfg Config, mux *http.ServeMux, prefix string, fsys fs.FS) error {
 		}
 	}))
 	return nil
-}
-
-// unionFS returns the union of multiple filesystems. When asked for a file it checks each
-// filesystem in the given order until one of them does not return ErrNotExist. In that case the
-// file and error are returned. If all the filesystems returned an ErrNotExist, it will be also
-// returned to the user.
-type unionFS []fs.FS
-
-func (u unionFS) Open(name string) (fs.File, error) {
-	for _, i := range u {
-		f, err := i.Open(name)
-		if !errors.Is(err, fs.ErrNotExist) {
-			return f, err
-		}
-	}
-	return nil, fs.ErrNotExist
 }
