@@ -19,6 +19,7 @@ import (
 	"github.com/posener/flarm/cesium"
 	"github.com/posener/flarm/flarmport"
 	"github.com/posener/flarm/flarmremote"
+	"github.com/posener/flarm/logger"
 	"github.com/posener/flarm/process"
 	"github.com/posener/wsbeam"
 )
@@ -44,6 +45,7 @@ var cfg struct {
 		Cert string
 		Key  string
 	}
+	Log logger.Config
 }
 
 // Common interface for flarmport and flarmremote.
@@ -82,6 +84,8 @@ func serve(ctx context.Context) {
 			log.Fatalf("Invalid timezone value %q: %s", tz, err)
 		}
 	}
+
+	sendLog := logger.New(cfg.Log)
 
 	var flarm flarmReader
 	var err error
@@ -145,6 +149,7 @@ func serve(ctx context.Context) {
 			entry := p.Process(value)
 			if entry != nil {
 				log.Printf("sending %+v", entry)
+				sendLog.Log(entry)
 				conns.Send(entry)
 			}
 		})
