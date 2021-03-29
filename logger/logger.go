@@ -8,6 +8,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type Config struct {
@@ -34,7 +35,9 @@ func New(cfg Config) (*Logger, error) {
 	default:
 		return nil, fmt.Errorf("unsupported dialect %q", cfg.Dialect)
 	}
-	db, err := gorm.Open(d, &gorm.Config{})
+	db, err := gorm.Open(d, &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		return nil, err
 	}
