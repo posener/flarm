@@ -15,6 +15,5 @@ require (
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gorm.io/driver/mysql v1.0.5
 	gorm.io/driver/postgres v1.0.8
-	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.21.6
 )

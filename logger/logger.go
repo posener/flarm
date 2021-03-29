@@ -6,7 +6,6 @@ import (
 	"github.com/posener/flarm/process"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -30,8 +29,6 @@ func New(cfg Config) (*Logger, error) {
 		d = postgres.Open(cfg.URL)
 	case "mysql":
 		d = mysql.Open(cfg.URL)
-	case "sqlite":
-		d = sqlite.Open(cfg.URL)
 	default:
 		return nil, fmt.Errorf("unsupported dialect %q", cfg.Dialect)
 	}
