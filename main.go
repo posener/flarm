@@ -85,10 +85,12 @@ func serve(ctx context.Context) {
 		}
 	}
 
-	sendLog := logger.New(cfg.Log)
+	sendLog, err := logger.New(cfg.Log)
+	if err != nil {
+		log.Fatalf("Failed initializing logger: %s", err)
+	}
 
 	var flarm flarmReader
-	var err error
 	switch {
 	case *port != "" && *remote != "":
 		log.Fatal("Usage: can't provide both 'port' and 'remote'.")

@@ -16,7 +16,7 @@ type Processor struct {
 }
 
 type Object struct {
-	ID        string
+	Name      string
 	Lat, Long float64
 	// Direction of airplane (In degrees relative to N)
 	Dir int
@@ -30,6 +30,8 @@ type Object struct {
 	Time       time.Time
 	AlarmLevel int
 }
+
+func (o *Object) TableName() string { return "logs" }
 
 func (s Processor) Process(v interface{}) *Object {
 	if v == nil {
@@ -56,7 +58,7 @@ func (s Processor) processPFLAA(e flarmport.TypePFLAA) *Object {
 	}
 	lat, long := add(s.Lat, s.Long, float64(e.RelativeNorth), float64(e.RelativeEast))
 	return &Object{
-		ID:          id,
+		Name:        id,
 		Lat:         lat,
 		Long:        long,
 		Dir:         int(e.Track),

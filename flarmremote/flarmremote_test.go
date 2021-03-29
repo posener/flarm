@@ -20,7 +20,7 @@ func TestOpen(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	objs := []*process.Object{{ID: "1"}, {ID: "2"}, {ID: "3"}}
+	objs := []*process.Object{{Name: "1"}, {Name: "2"}, {Name: "3"}}
 
 	for _, o := range objs {
 		assert.NoError(t, in.Send(o))

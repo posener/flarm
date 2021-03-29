@@ -290,7 +290,7 @@ function main() {
         const msg = JSON.parse(evt.data);
         const position = Cesium.Cartesian3.fromDegrees(msg.Long, msg.Lat, msg.Alt + altFix);
         const time = Cesium.JulianDate.fromIso8601(msg.Time);
-        const id = msg.ID;
+        const id = msg.Name;
 
         console.log(`[${id}] position=${msg.Long},${msg.Lat} alt=${msg.Alt + altFix} speed=${msg.GroundSpeed} time=${msg.Time}`);
 
@@ -326,7 +326,7 @@ function main() {
         switch (units) {
             case "metric":
                 text =
-                    `${msg.ID}\n` +
+                    `${msg.Name}\n` +
                     `Alt: ${msg.Alt}m\n` +
                     `Speed: ${msg.GroundSpeed}ms/s\n` +
                     `Vario: ${msg.Climb}m/s\n` +
@@ -334,7 +334,7 @@ function main() {
                 break;
             case "imperial":
                 text =
-                    `${msg.ID}\n` +
+                    `${msg.Name}\n` +
                     `Alt: ${Math.round(msg.Alt * 0.30484)}ft\n` +
                     `Speed: ${Math.round(msg.GroundSpeed * 0.514444)}kts\n` +
                     `Vario: ${Math.round(msg.Climb * 0.514444)}kts\n` +
@@ -342,7 +342,7 @@ function main() {
                 break;
             case "mixed":
                 text =
-                    `${msg.ID}\n` +
+                    `${msg.Name}\n` +
                     `Alt: ${Math.round(msg.Alt * 0.30484)}ft\n` +
                     `Speed: ${Math.round(msg.GroundSpeed * 0.514444)}kts\n` +
                     `Vario: ${msg.Climb}m/s\n` +

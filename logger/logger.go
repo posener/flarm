@@ -1,42 +1,50 @@
 package logger
 
 import (
-	"encoding/json"
-	"log"
+	"fmt"
 
-	"gopkg.in/natefinch/lumberjack.v2"
+	"github.com/posener/flarm/process"
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 type Config struct {
-	Path         string
-	RotateSizeMB int
+	Dialect string
+	URL     string
 }
 
 type Logger struct {
-	l *log.Logger
+	db *gorm.DB
 }
 
-func New(cfg Config) *Logger {
-	if cfg.Path == "" {
-		return nil
+func New(cfg Config) (*Logger, error) {
+	if cfg.URL == "" {
+		return nil, nil
 	}
-	return &Logger{
-		l: log.New(&lumberjack.Logger{
-			Filename: cfg.Path,
-			MaxSize:  cfg.RotateSizeMB,
-		}, "", 0),
+	var d gorm.Dialector
+	switch cfg.Dialect {
+	case "postgres":
+		d = postgres.Open(cfg.URL)
+	case "mysql":
+		d = mysql.Open(cfg.URL)
+	case "sqlite":
+		d = sqlite.Open(cfg.URL)
+	default:
+		return nil, fmt.Errorf("unsupported dialect %q", cfg.Dialect)
 	}
+	db, err := gorm.Open(d, &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+	db.AutoMigrate(process.Object{})
+	return &Logger{db: db}, nil
 }
 
-func (l *Logger) Log(v interface{}) {
+func (l *Logger) Log(o *process.Object) {
 	if l == nil {
 		return
 	}
-
-	data, err := json.Marshal(v)
-	if err != nil {
-		log.Printf("Failed marshaling %+v: %s", v, err)
-		return
-	}
-	l.l.Print(string(data))
+	l.db.Create(o)
 }
