@@ -19,6 +19,7 @@ import (
 	"github.com/posener/flarm/cesium"
 	"github.com/posener/flarm/flarmport"
 	"github.com/posener/flarm/flarmremote"
+	"github.com/posener/flarm/googleauth"
 	"github.com/posener/flarm/logger"
 	"github.com/posener/flarm/process"
 	"github.com/posener/wsbeam"
@@ -45,7 +46,9 @@ var cfg struct {
 		Cert string
 		Key  string
 	}
-	Log logger.Config
+	Log        logger.Config
+	Admin      admin.Config
+	GoogleAuth googleauth.Config
 }
 
 // Common interface for flarmport and flarmremote.
@@ -58,6 +61,7 @@ type flarmReader interface {
 
 func main() {
 	flag.Parse()
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
@@ -112,16 +116,21 @@ func serve(ctx context.Context) {
 		log.Fatalf("Failed loading cesium server: %s", err)
 	}
 
-	adminHandler, err := admin.New(*configPath, cfg, cancel)
-
+	adminHandler, err := admin.New(cfg.Admin, *configPath, cfg, cancel)
 	if err != nil {
 		log.Fatalf("Failed loading admin handler: %s", err)
+	}
+
+	auth, err := googleauth.New(ctx, cfg.GoogleAuth)
+	if err != nil {
+		log.Fatalf("Failed loading auth middleware: %s", err)
 	}
 
 	mux := http.NewServeMux()
 	mux.Handle("/ws", conns)
 	mux.Handle("/", cesium)
-	mux.Handle("/admin", http.StripPrefix("/admin", adminHandler))
+	mux.Handle("/admin", http.StripPrefix("/admin", auth.Authenticate(adminHandler)))
+	mux.Handle("/auth", auth.RedirectHandler())
 	srv := &http.Server{Addr: *addr, Handler: mux}
 
 	go func() {
