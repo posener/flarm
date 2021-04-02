@@ -17,7 +17,7 @@ type Processor struct {
 
 type Object struct {
 	Name      string
-	Lat, Long float64 `gorm:"type:float,precision:2"`
+	Lat, Long float64 `gorm:"type=float,precision=2"`
 	// Direction of airplane (In degrees relative to N)
 	Dir int
 	// Altitude in m

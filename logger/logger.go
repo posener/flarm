@@ -36,9 +36,12 @@ func New(cfg Config) (*Logger, error) {
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed connecting to db: %s", err)
 	}
-	db.AutoMigrate(process.Object{})
+	err = db.AutoMigrate(process.Object{})
+	if err != nil {
+		return nil, fmt.Errorf("failed migrating table: %s", err)
+	}
 	return &Logger{db: db}, nil
 }
 
