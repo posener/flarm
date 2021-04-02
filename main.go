@@ -27,6 +27,7 @@ import (
 
 var (
 	port       = flag.String("port", "", "Serial port path.")
+	baudRate   = flag.Uint("baud_rate", 57600, "Serial port baud rate.")
 	remote     = flag.String("remote", "", "Remote flarm server to connect to.")
 	addr       = flag.String("addr", ":8080", "Address for HTTP serving.")
 	configPath = flag.String("config", "config.json", "Configuration")
@@ -99,7 +100,7 @@ func serve(ctx context.Context) {
 	case *port != "" && *remote != "":
 		log.Fatal("Usage: can't provide both 'port' and 'remote'.")
 	case *port != "":
-		flarm, err = flarmport.Open(*port)
+		flarm, err = flarmport.Open(*port, *baudRate)
 	case *remote != "":
 		flarm, err = flarmremote.Open(*remote)
 	default:

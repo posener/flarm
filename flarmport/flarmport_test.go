@@ -33,6 +33,8 @@ func TestOpen(t *testing.T) {
 	// Get port names from the stderr of socat.
 	wPort, rPort := parsePorts(stderr)
 
+	baudRate := uint(19200)
+
 	// Create port writer.
 	w, err := serial.Open(serial.OpenOptions{
 		PortName:        wPort,
@@ -46,7 +48,7 @@ func TestOpen(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	flarm, err := Open(rPort)
+	flarm, err := Open(rPort, baudRate)
 	if err != nil {
 		t.Fatal(err)
 	}

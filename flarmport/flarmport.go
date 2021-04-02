@@ -31,8 +31,6 @@ import (
 	"github.com/jacobsa/go-serial/serial"
 )
 
-const baudRate = 19200
-
 // Port is a connection to a FLARM serial port.
 type Port struct {
 	scanner *bufio.Scanner
@@ -40,7 +38,7 @@ type Port struct {
 }
 
 // Open opens a serial connection to a given FLARM port.
-func Open(port string) (*Port, error) {
+func Open(port string, baudRate uint) (*Port, error) {
 	serial, err := serial.Open(serial.OpenOptions{
 		PortName: port,
 		// Baud rate from spec: "The baud rate can be configured by commands described in FLARM
