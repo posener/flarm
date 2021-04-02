@@ -11,12 +11,19 @@ import (
 )
 
 type Config struct {
+	// Database dialect. 'mysql' or 'postgres'.
 	Dialect string
-	URL     string
+	// Database connection string.
+	// For mysql: user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local
+	// For postgres: host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai
+	URL string
+	// Minimal speed to log to DB, in m/s.
+	MinLogSpeed int64
 }
 
 type Logger struct {
-	db *gorm.DB
+	db  *gorm.DB
+	cfg Config
 }
 
 func New(cfg Config) (*Logger, error) {
@@ -42,11 +49,14 @@ func New(cfg Config) (*Logger, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed migrating table: %s", err)
 	}
-	return &Logger{db: db}, nil
+	return &Logger{db: db, cfg: cfg}, nil
 }
 
 func (l *Logger) Log(o *process.Object) {
 	if l == nil {
+		return
+	}
+	if o.GroundSpeed < l.cfg.MinLogSpeed {
 		return
 	}
 	l.db.Create(o)
