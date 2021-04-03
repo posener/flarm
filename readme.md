@@ -1,6 +1,6 @@
 # flarm
 
-![screenshot](screenshot.png)
+![screenshot](screenshot.jpeg)
 
 ## Run in test mode
 
