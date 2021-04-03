@@ -1,0 +1,30 @@
+project_name: flarm
+release:
+  github:
+    owner: posener
+    name: flarm
+  name_template: '{{.Tag}}'
+builds:
+- id: flarm
+  goos:
+  - linux
+  goarch:
+  - amd64
+  - arm64
+  goarm:
+  - "5"
+  targets:
+  - linux_amd64
+  - linux_arm64
+  dir: .
+  main: .
+  ldflags:
+  - -s -w
+  binary: flarm
+  lang: go
+  gobinary: go
+dist: dist
+gomod:
+  gobinary: go
+github_urls:
+  download: https://github.com
