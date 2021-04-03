@@ -11,6 +11,7 @@ require (
 	github.com/posener/fsutil v0.0.0-20210327120643-2279a5286d7f
 	github.com/posener/wsbeam v0.0.0-20210102092930-e520c4c04d42
 	github.com/stretchr/testify v1.7.0
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/oauth2 v0.0.0-20210323180902-22b0adad7558
 	golang.org/x/sys v0.0.0-20201218084310-7d0127a74742 // indirect
 	google.golang.org/api v0.30.0

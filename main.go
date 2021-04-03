@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"flag"
 	"io/ioutil"
@@ -23,6 +24,7 @@ import (
 	"github.com/posener/flarm/logger"
 	"github.com/posener/flarm/process"
 	"github.com/posener/wsbeam"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 var (
@@ -44,8 +46,13 @@ var cfg struct {
 	FlarmMap map[string]string
 	Cesium   cesium.Config
 	SSL      struct {
-		Cert string
-		Key  string
+		Cert        string
+		Key         string
+		LetsEncrypt struct {
+			Enabled      bool
+			AllowedHosts []string
+			CacheDir     string
+		}
 	}
 	Log        logger.Config
 	Admin      admin.Config
@@ -137,9 +144,20 @@ func serve(ctx context.Context) {
 	go func() {
 		log.Printf("Serving on %s", *addr)
 		var err error
-		if cfg.SSL.Key != "" && cfg.SSL.Cert != "" {
+		switch {
+		case cfg.SSL.Key != "" && cfg.SSL.Cert != "":
 			err = srv.ListenAndServeTLS(cfg.SSL.Cert, cfg.SSL.Key)
-		} else {
+		case cfg.SSL.LetsEncrypt.Enabled:
+			cm := autocert.Manager{
+				Prompt:     autocert.AcceptTOS,
+				HostPolicy: autocert.HostWhitelist(cfg.SSL.LetsEncrypt.AllowedHosts...),
+				Cache:      autocert.DirCache(cfg.SSL.LetsEncrypt.CacheDir),
+			}
+			srv.TLSConfig = &tls.Config{
+				GetCertificate: cm.GetCertificate,
+			}
+			err = srv.ListenAndServeTLS("", "")
+		default:
 			err = srv.ListenAndServe()
 		}
 		if err != nil {
