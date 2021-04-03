@@ -20,9 +20,9 @@ import (
 	"github.com/posener/flarm/cesium"
 	"github.com/posener/flarm/flarmport"
 	"github.com/posener/flarm/flarmremote"
-	"github.com/posener/flarm/googleauth"
 	"github.com/posener/flarm/logger"
 	"github.com/posener/flarm/process"
+	"github.com/posener/googleauth"
 	"github.com/posener/wsbeam"
 	"golang.org/x/crypto/acme/autocert"
 )
@@ -205,4 +205,5 @@ func loadConfig() {
 	if err != nil {
 		log.Fatalf("Failed parsing config: %s", err)
 	}
+	cfg.GoogleAuth.Log = log.Printf
 }

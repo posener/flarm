@@ -12,7 +12,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/posener/flarm/googleauth"
+	"github.com/posener/googleauth"
 )
 
 type Config struct {
