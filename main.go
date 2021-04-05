@@ -156,6 +156,7 @@ func serve(ctx context.Context) {
 			srv.TLSConfig = &tls.Config{
 				GetCertificate: cm.GetCertificate,
 			}
+			go http.ListenAndServe(":80", cm.HTTPHandler(nil))
 			err = srv.ListenAndServeTLS("", "")
 		default:
 			err = srv.ListenAndServe()
