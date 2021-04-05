@@ -206,4 +206,19 @@ func loadConfig() {
 		log.Fatalf("Failed parsing config: %s", err)
 	}
 	cfg.GoogleAuth.Log = log.Printf
+
+	// Check SSL config.
+	if ssl := cfg.SSL; ssl.Cert != "" || ssl.Key != "" {
+		if ssl.LetsEncrypt.Enabled {
+			log.Fatal("Cant use SSL.Cert and SSL.Key with SSL.LetsEncrypt.Enabled.")
+		}
+		if ssl.Cert == "" || ssl.Key == "" {
+			log.Fatalf("When using SSL Cert and Key, both Cert and Key should be set.")
+		}
+	}
+	if letsEncrypt := cfg.SSL.LetsEncrypt; letsEncrypt.Enabled {
+		if len(letsEncrypt.AllowedHosts) == 0 {
+			log.Fatalf("When LetsEncrypt is enabled, AllowedHosts must be given.")
+		}
+	}
 }
