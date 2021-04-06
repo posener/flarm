@@ -156,7 +156,12 @@ func serve(ctx context.Context) {
 			srv.TLSConfig = &tls.Config{
 				GetCertificate: cm.GetCertificate,
 			}
-			go http.ListenAndServe(":80", cm.HTTPHandler(nil))
+			go func() {
+				err := http.ListenAndServe(":80", cm.HTTPHandler(nil))
+				if err != nil {
+					log.Fatalf("Failed autocert serving: %s", err)
+				}
+			}()
 			err = srv.ListenAndServeTLS("", "")
 		default:
 			err = srv.ListenAndServe()
