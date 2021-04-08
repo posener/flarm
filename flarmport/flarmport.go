@@ -24,6 +24,7 @@ package flarmport
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 
@@ -61,16 +62,17 @@ func Open(port string, baudRate uint) (*Port, error) {
 }
 
 // Range iterates and parses data from the serial connection. It exists when the port is closed.
-func (p *Port) Range(f func(interface{})) error {
-	for {
+func (p *Port) Range(ctx context.Context, f func(interface{})) error {
+	for ctx.Err() == nil {
 		value, ok := p.next()
 		if !ok {
 			return nil
 		}
-		if value != nil {
+		if value != nil && ctx.Err() == nil {
 			f(value)
 		}
 	}
+	return ctx.Err()
 }
 
 // next used by Range and exist for testing purposes.

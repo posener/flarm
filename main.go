@@ -9,6 +9,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -57,12 +58,16 @@ var cfg struct {
 	Log        logger.Config
 	Admin      admin.Config
 	GoogleAuth googleauth.Config
+
+	FlarmReconnectDelaySec int
 }
+
+const defaultFlarmReconnectDelay = time.Second * 3
 
 // Common interface for flarmport and flarmremote.
 type flarmReader interface {
 	// Range iterates over the values received from the flarm.
-	Range(func(interface{})) error
+	Range(context.Context, func(interface{})) error
 	// Close stops reading flarm data.
 	Close() error
 }
@@ -101,22 +106,6 @@ func serve(ctx context.Context) {
 	if err != nil {
 		log.Fatalf("Failed initializing logger: %s", err)
 	}
-
-	var flarm flarmReader
-	switch {
-	case *port != "" && *remote != "":
-		log.Fatal("Usage: can't provide both 'port' and 'remote'.")
-	case *port != "":
-		flarm, err = flarmport.Open(*port, *baudRate)
-	case *remote != "":
-		flarm, err = flarmremote.Open(*remote)
-	default:
-		log.Fatal("Usage: must provide 'port' or 'remote'.")
-	}
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer flarm.Close()
 
 	conns := wsbeam.New()
 	cesium, err := cesium.New(cfg.Cesium)
@@ -167,7 +156,7 @@ func serve(ctx context.Context) {
 			err = srv.ListenAndServe()
 		}
 		if err != nil {
-			log.Print(err)
+			log.Fatal(err)
 		}
 	}()
 
@@ -180,17 +169,33 @@ func serve(ctx context.Context) {
 	}
 
 	go func() {
-		log.Println("Start reading flarm data...")
-		err := flarm.Range(func(value interface{}) {
-			entry := p.Process(value)
-			if entry != nil {
-				log.Printf("sending %+v", entry)
-				sendLog.Log(entry)
-				conns.Send(entry)
+		for ctx.Err() == nil {
+			flarm, err := getFlarm()
+			if err == nil {
+				defer flarm.Close()
+				log.Println("Start reading flarm data...")
+				err = flarm.Range(ctx, func(value interface{}) {
+					entry := p.Process(value)
+					if entry != nil {
+						log.Printf("sending %+v", entry)
+						sendLog.Log(entry)
+						conns.Send(entry)
+					}
+				})
 			}
-		})
-		if err != nil {
-			log.Fatalf("Failed iterating flarm values: %v", err)
+
+			if err != nil {
+				log.Printf("Failed iterating flarm values: %v", err)
+			}
+			// If context was not cancelled, reconnect to flarm.
+			if ctx.Err() == nil {
+				flarmReconnectDelay := time.Duration(cfg.FlarmReconnectDelaySec) * time.Second
+				if flarmReconnectDelay == 0 {
+					flarmReconnectDelay = defaultFlarmReconnectDelay
+				}
+				log.Printf("Will try to reconnect to flarm in %v...", flarmReconnectDelay)
+				time.Sleep(flarmReconnectDelay)
+			}
 		}
 	}()
 
@@ -227,4 +232,16 @@ func loadConfig() {
 			log.Fatalf("When LetsEncrypt is enabled, AllowedHosts must be given.")
 		}
 	}
+}
+
+func getFlarm() (flarmReader, error) {
+	switch {
+	case *port != "" && *remote != "":
+		log.Fatal("Usage: can't provide both 'port' and 'remote'.")
+	case *port != "":
+		return flarmport.Open(*port, *baudRate)
+	case *remote != "":
+		return flarmremote.Open(*remote)
+	}
+	return nil, fmt.Errorf("Usage: must provide 'port' or 'remote'.")
 }

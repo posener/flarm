@@ -1,6 +1,7 @@
 package flarmremote
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -25,15 +26,18 @@ type Conn struct {
 	conn *websocket.Conn
 }
 
-func (c *Conn) Range(f func(interface{})) error {
+func (c *Conn) Range(ctx context.Context, f func(interface{})) error {
 	defer c.conn.Close()
-	for {
+	for ctx.Err() == nil {
 		v, err := c.next()
 		if err != nil {
 			return err
 		}
-		f(v)
+		if ctx.Err() == nil {
+			f(v)
+		}
 	}
+	return ctx.Err()
 }
 
 // next is used in Range and exists for testing purposes.
