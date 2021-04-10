@@ -3,7 +3,7 @@ package logger
 import (
 	"fmt"
 
-	"github.com/posener/flarm/process"
+	"github.com/posener/flarm/flarmport"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -45,14 +45,14 @@ func New(cfg Config) (*Logger, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed connecting to db: %s", err)
 	}
-	err = db.AutoMigrate(process.Object{})
+	err = db.AutoMigrate(flarmport.Data{})
 	if err != nil {
 		return nil, fmt.Errorf("failed migrating table: %s", err)
 	}
 	return &Logger{db: db, cfg: cfg}, nil
 }
 
-func (l *Logger) Log(o *process.Object) {
+func (l *Logger) Log(o flarmport.Data) {
 	if l == nil {
 		return
 	}

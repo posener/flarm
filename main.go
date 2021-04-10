@@ -20,9 +20,7 @@ import (
 	"github.com/posener/flarm/admin"
 	"github.com/posener/flarm/cesium"
 	"github.com/posener/flarm/flarmport"
-	"github.com/posener/flarm/flarmremote"
 	"github.com/posener/flarm/logger"
-	"github.com/posener/flarm/process"
 	"github.com/posener/googleauth"
 	"github.com/posener/wsbeam"
 	"golang.org/x/crypto/acme/autocert"
@@ -63,14 +61,6 @@ var cfg struct {
 }
 
 const defaultFlarmReconnectDelay = time.Second * 3
-
-// Common interface for flarmport and flarmremote.
-type flarmReader interface {
-	// Range iterates over the values received from the flarm.
-	Range(context.Context, func(interface{})) error
-	// Close stops reading flarm data.
-	Close() error
-}
 
 func main() {
 	flag.Parse()
@@ -160,7 +150,7 @@ func serve(ctx context.Context) {
 		}
 	}()
 
-	p := process.Processor{
+	station := flarmport.StationInfo{
 		Lat:      cfg.Location.Lat,
 		Long:     cfg.Location.Long,
 		Alt:      cfg.Location.Alt,
@@ -170,17 +160,14 @@ func serve(ctx context.Context) {
 
 	go func() {
 		for ctx.Err() == nil {
-			flarm, err := getFlarm()
+			flarm, err := getFlarm(station)
 			if err == nil {
 				defer flarm.Close()
 				log.Println("Start reading flarm data...")
-				err = flarm.Range(ctx, func(value interface{}) {
-					entry := p.Process(value)
-					if entry != nil {
-						log.Printf("sending %+v", entry)
-						sendLog.Log(entry)
-						conns.Send(entry)
-					}
+				err = flarm.Range(ctx, func(o flarmport.Data) {
+					log.Printf("sending %+v", o)
+					sendLog.Log(o)
+					conns.Send(o)
 				})
 			}
 
@@ -234,14 +221,14 @@ func loadConfig() {
 	}
 }
 
-func getFlarm() (flarmReader, error) {
+func getFlarm(station flarmport.StationInfo) (flarmport.Reader, error) {
 	switch {
 	case *port != "" && *remote != "":
 		log.Fatal("Usage: can't provide both 'port' and 'remote'.")
 	case *port != "":
-		return flarmport.Open(*port, *baudRate)
+		return flarmport.Open(*port, *baudRate, station)
 	case *remote != "":
-		return flarmremote.Open(*remote)
+		return flarmport.Remote(*remote)
 	}
 	return nil, fmt.Errorf("Usage: must provide 'port' or 'remote'.")
 }

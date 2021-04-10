@@ -7,8 +7,8 @@ import (
 	"os/exec"
 	"regexp"
 	"testing"
+	"time"
 
-	"github.com/adrianmo/go-nmea"
 	"github.com/jacobsa/go-serial/serial"
 	"github.com/stretchr/testify/assert"
 )
@@ -48,7 +48,7 @@ func TestOpen(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	flarm, err := Open(rPort, baudRate)
+	flarm, err := Open(rPort, baudRate, StationInfo{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -56,47 +56,32 @@ func TestOpen(t *testing.T) {
 	tests := []struct {
 		name string
 		in   string
-		want interface{}
+		want *Data
 	}{
 		{
 			name: "PFLAA",
 			in:   "$PFLAA,0,-1388,-330,465,2,DD8E8B,78,,44,2.8,2*6F",
-			want: TypePFLAA{
-				AlarmLevel:       0,
-				RelativeNorth:    -1388,
-				RelativeEast:     -330,
-				RelativeVertical: 465,
-				IDType:           "flarm id",
-				ID:               "DD8E8B",
-				Track:            78,
-				TurnRate:         0,
-				GroundSpeed:      44,
-				ClimbRate:        2.8,
-				AircraftType:     "towplane",
+			want: &Data{
+				AlarmLevel:  0,
+				Lat:         -0.01246861614357896,
+				Long:        -0.002964440437594421,
+				Alt:         465,
+				Name:        "DD8E8B",
+				GroundSpeed: 44,
+				Climb:       2.8,
+				Dir:         78,
+				Type:        "towplane",
 			},
 		},
 		{
 			name: "PFLAU",
 			in:   "$PFLAU,2,1,1,1,0,,0,,*61",
-			want: TypePFLAU{
-				Rx:               2,
-				Tx:               "no transmission",
-				GPS:              "valid on ground",
-				Power:            1,
-				AlarmLevel:       0,
-				RelativeBearing:  0,
-				AlarmType:        "no alarm",
-				RelativeVertical: 0,
-				RelativeDistance: 0,
-				ID:               "",
-			},
+			want: nil,
 		},
 		{
 			name: "PGRMZ",
 			in:   "$PGRMZ,78,F,2*05",
-			want: TypePGRMZ{
-				Altitude: 78,
-			},
+			want: nil,
 		},
 	}
 
@@ -105,7 +90,7 @@ func TestOpen(t *testing.T) {
 			w.Write([]byte(tt.in + "\n\r"))
 			v, ok := flarm.next()
 			assert.True(t, ok)
-			assert.Equal(t, tt.want, clean(v))
+			assert.Equal(t, tt.want, clean(t, v))
 		})
 	}
 }
@@ -125,18 +110,11 @@ func parsePorts(stderr io.Reader) (p1, p2 string) {
 	return ports[0], ports[1]
 }
 
-func clean(got interface{}) interface{} {
-	switch v := got.(type) {
-	case TypePFLAA:
-		v.BaseSentence = nmea.BaseSentence{}
-		return v
-	case TypePFLAU:
-		v.BaseSentence = nmea.BaseSentence{}
-		return v
-	case TypePGRMZ:
-		v.BaseSentence = nmea.BaseSentence{}
-		return v
-	default:
+func clean(t *testing.T, got *Data) *Data {
+	if got == nil {
 		return got
 	}
+	assert.NotNil(t, got.Time)
+	got.Time = time.Time{}
+	return got
 }
