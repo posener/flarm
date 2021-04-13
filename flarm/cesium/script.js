@@ -361,8 +361,8 @@ function main() {
             pixelOffset: new Cesium.Cartesian2(0, -50),
             scaleByDistance: new Cesium.NearFarScalar(0.0, 1.0, 1.0e4, 0.5)
         };
+	viewer.scene.requestRender();
     };
-    viewer.scene.requestRender();
     ws.onclose = function () {
         console.log(`ws disconnected`);
     };
