@@ -17,11 +17,11 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/posener/auth"
 	"github.com/posener/flarm/admin"
 	"github.com/posener/flarm/cesium"
 	"github.com/posener/flarm/flarmport"
 	"github.com/posener/flarm/logger"
-	"github.com/posener/googleauth"
 	"github.com/posener/wsbeam"
 	"golang.org/x/crypto/acme/autocert"
 )
@@ -55,7 +55,7 @@ var cfg struct {
 	}
 	Log        logger.Config
 	Admin      admin.Config
-	GoogleAuth googleauth.Config
+	GoogleAuth auth.Config
 
 	FlarmReconnectDelaySec int
 }
@@ -108,7 +108,7 @@ func serve(ctx context.Context) {
 		log.Fatalf("Failed loading admin handler: %s", err)
 	}
 
-	auth, err := googleauth.New(ctx, cfg.GoogleAuth)
+	authHandler, err := auth.New(ctx, cfg.GoogleAuth)
 	if err != nil {
 		log.Fatalf("Failed loading auth middleware: %s", err)
 	}
@@ -116,8 +116,8 @@ func serve(ctx context.Context) {
 	mux := http.NewServeMux()
 	mux.Handle("/ws", conns)
 	mux.Handle("/", cesium)
-	mux.Handle("/admin", http.StripPrefix("/admin", auth.Authenticate(adminHandler)))
-	mux.Handle("/auth", auth.RedirectHandler())
+	mux.Handle("/admin", http.StripPrefix("/admin", authHandler.Authenticate(adminHandler)))
+	mux.Handle("/auth", authHandler.RedirectHandler())
 	srv := &http.Server{Addr: *addr, Handler: mux}
 
 	go func() {
@@ -230,5 +230,5 @@ func getFlarm(station flarmport.StationInfo) (flarmport.Reader, error) {
 	case *remote != "":
 		return flarmport.Remote(*remote)
 	}
-	return nil, fmt.Errorf("Usage: must provide 'port' or 'remote'.")
+	return nil, fmt.Errorf("usage: must provide 'port' or 'remote'")
 }

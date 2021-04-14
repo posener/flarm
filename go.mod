@@ -8,6 +8,7 @@ require (
 	github.com/jacobsa/go-serial v0.0.0-20180131005756-15cf729a72d4
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/lib/pq v1.6.0 // indirect
+	github.com/posener/auth v0.1.0
 	github.com/posener/fsutil v0.0.0-20210327120643-2279a5286d7f
 	github.com/posener/googleauth v0.0.3
 	github.com/posener/wsbeam v0.0.0-20210102092930-e520c4c04d42
