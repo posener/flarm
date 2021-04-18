@@ -27,12 +27,12 @@ const viewer = new Cesium.Viewer('cesiumContainer', {
     sceneModePicker: false,
     navigationHelpButton: false,
     requestRenderMode: true,
-    maximumRenderTimeChange: Infinity
+    maximumRenderTimeChange: 0.25
 });
 
 // Add Cesium OSM Buildings, a global 3D buildings layer.
 viewer.scene.primitives.add(Cesium.createOsmBuildings());
-viewer.scene.debugShowFramesPerSecond = true;
+//viewer.scene.debugShowFramesPerSecond = true;
 viewer.camera.flyTo({
     destination: Cesium.Cartesian3.fromDegrees(cameraLong, cameraLat, cameraAlt),
     orientation: {
@@ -324,11 +324,16 @@ function main() {
         const position = Cesium.Cartesian3.fromDegrees(msg.Long, msg.Lat, msg.Alt + altFix);
         const time = Cesium.JulianDate.fromIso8601(msg.Time);
         const id = msg.Name;
+//Correction for true heading
+        var heading = Cesium.Math.toRadians(msg.Dir-90.0);
+        var pitch = Cesium.Math.toRadians(0.0);
+        var roll = Cesium.Math.toRadians(0.0);
+        var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, new Cesium.HeadingPitchRoll(heading, pitch, roll));
 
         if (msg.GroundSpeed < minGroundSpeed) {
             return;
         }
-
+	
         if (!viewer.entities.getById(id)) {
             console.log(`Creating ${id}.`);
             var posProp = new Cesium.SampledPositionProperty();
@@ -337,7 +342,7 @@ function main() {
                 position: posProp,
                 model: drawModel(msg.Type),
                 description: `${id}`,
-                orientation: new Cesium.VelocityOrientationProperty(posProp),
+                //orientation: new Cesium.VelocityOrientationProperty(posProp),
                 path: new Cesium.PathGraphics({
                     width: 2,
 		    leadTime: 0,
@@ -353,6 +358,12 @@ function main() {
 
         const entity = viewer.entities.getById(id);
         entity.position.addSample(time, position);
+        entity.position.setInterpolationOptions({
+          interpolationDegree: 1,
+          interpolationAlgorithm: Cesium.LagrangePolynomialApproximation,
+        });
+        entity.orientation = orientation;
+
         entity.label = {
             text: setMarkerText(msg),
             font: '16pt monospace',
@@ -361,7 +372,7 @@ function main() {
             pixelOffset: new Cesium.Cartesian2(0, -50),
             scaleByDistance: new Cesium.NearFarScalar(0.0, 1.0, 1.0e4, 0.5)
         };
-	viewer.scene.requestRender();
+//	viewer.scene.requestRender();
     };
     ws.onclose = function () {
         console.log(`ws disconnected`);
