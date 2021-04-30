@@ -66,7 +66,7 @@ You can open the browser on `http://localhost:8080` and already see the map.
 Finally, we'll simulate FLARM input, by writing to the second port:
 
 ```bash
-awk '{print $0; system("sleep .1");}' testdata/demo_data.txt > /dev/pts/3
+awk '{print $0; system("sleep .1");}' testdata/flarm.txt > /dev/pts/3
 ```
 
 This command writes the data from `testdata/demp_data.txt` to the second port, with a sleep of 100ms

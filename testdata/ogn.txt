@@ -1,0 +1,118 @@
+Connection closed by foreign host.
+Trying ::1...
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+@@@ Welcome to procServ (procServ Process Server 2.7.0)
+@@@ Use ^X to kill the child, auto restart is ON, use ^T to toggle auto restart
+@@@ Use ^C to logout from procServ server
+@@@ procServ server PID: 1081
+@@@ Server startup directory: /
+@@@ Child startup directory: /var/opt/rtlsdr-ogn
+@@@ Child started as: ./ogn-decode
+@@@ Child "./ogn-decode" PID: 1118
+@@@ procServ server started at: Thu Apr 22 13:38:20 2021
+@@@ Child "./ogn-decode" started at: Thu Apr 22 13:40:56 2021
+@@@ 0 user(s) and 0 logger(s) connected (plus you)
+0.802sec:916.200MHz:   1:2:DDFD1D 104436: [ +32.59657, +35.23525]deg    77m  +0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 07x05m Fn:35___ +0.41kHz 45.0/55.5dB/0  0e     0.0km 161.7deg +12.9deg          
+0.109sec:916.195MHz:   1:2:DDFD1A 104436: [ +32.59659, +35.23464]deg    82m  +0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 04x05m Fn:35___ -5.20kHz 34.2/45.0dB/0  0e     0.0km 238.2deg +13.8deg          
+0.757sec:916.201MHz:   1:2:DD8E69 104436: [ +32.59709, +35.23469]deg    77m  +0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m5 04x05m Fn:35_o_ +0.52kHz 27.8/38.0dB/0  0e     0.0km 303.7deg  +8.1deg          
+0.644sec:916.196MHz:   1:2:DD8E8B 104436: [ +32.57913, +35.23035]deg   625m  -3.0m/s  28.5m/s 203.0deg +16.7deg/s 1m4 04x05m Fn:35_o_ -4.33kHz 11.0/22.0dB/0  0e     2.0km 192.5deg +15.2deg    !     
+0.485sec:916.199MHz:   2:2:DDFD21 104436: [ +32.58487, +35.24666]deg   411m  -3.0m/s  43.2m/s 087.4deg  -0.5deg/s 2m5 05x06m Fn:35_o_ -1.32kHz 10.8/20.0dB/0  0e     1.7km 140.7deg +11.1deg          
+APRS <- FLRDD8E69>OGFLR,qOR:/104436h3235.82N/03514.08E'000/000/A=000253 !W51! id06DD8E69 +020fpm +0.0rot 27.8dB +0.5kHz gps4x5
+APRS <- FLRDD8E8B>OGFLR,qOR:/104436h3234.74N/03513.82E'203/055/A=002051 !W70! id06DD8E8B -593fpm +5.6rot 11.0dB -4.3kHz gps4x5 +11.2dBm
+APRS <- FLRDDFD1D>OGFLR,qOR:/104436h3235.79N/03514.11E'000/000/A=000253 !W45! id06DDFD1D +020fpm +0.0rot 45.0dB +0.4kHz gps7x5
+APRS <- FLRDDFD21>OGFLR,qOR:/104436h3235.09N/03514.79E'087/083/A=001349 !W29! id0ADDFD21 -593fpm -0.2rot 10.8dB -1.3kHz gps5x6
+APRS -> # aprsc 2.1.5-g8af3cdc 22 Apr 2021 10:44:39 GMT GLIDERN1 51.178.19.212:14580
+APRS time - system time = -1
+APRS -> # aprsc 2.1.5-g8af3cdc 22 Apr 2021 10:44:59 GMT GLIDERN1 51.178.19.212:14580
+APRS time - system time = -1
+0.595sec:916.200MHz:   1:2:DDFD1D 104504: [ +32.59659, +35.23524]deg    70m  -0.2m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 08x09m Fn:35_o_ +0.36kHz 51.5/61.5dB/0  0e     0.0km 161.7deg  +0.0deg          
+0.463sec:916.195MHz:   1:2:DDFD1A 104504: [ +32.59659, +35.23464]deg    82m  +0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 04x05m Fn:35_o_ -5.26kHz 39.0/48.5dB/0  0e     0.0km 238.2deg +13.8deg          
+0.633sec:916.200MHz:   1:2:DD8E69 104504: [ +32.59703, +35.23478]deg    76m  +0.1m/s   1.2m/s 168.5deg +11.3deg/s 1m1 04x05m Fn:35_o_ +0.49kHz 33.0/43.5dB/0  0e     0.0km 319.2deg  +8.8deg          
+0.999sec:916.199MHz:   2:2:DDFD21 104504: [ +32.58895, +35.25666]deg   313m  -4.2m/s  32.6m/s 015.8deg  -3.5deg/s 2m5 05x06m Fn:35___ -1.30kHz 16.2/26.0dB/0  0e     2.2km 113.3deg  +6.1deg          
+APRS <- FLRDD8E69>OGFLR,qOR:/104504h3235.82N/03514.08E'168/002/A=000249 !W16! id06DD8E69 +020fpm +3.8rot 33.0dB +0.5kHz gps4x5
+APRS <- FLRDDFD1A>OGFLR,qOR:/104504h3235.79N/03514.07E'000/000/A=000269 !W58! id06DDFD1A +020fpm +0.0rot 39.0dB -5.3kHz gps4x5
+APRS <- FLRDDFD1D>OGFLR,qOR:/104504h3235.79N/03514.11E'000/000/A=000230 !W54! id06DDFD1D -039fpm +0.0rot 51.5dB +0.4kHz gps8x9
+APRS <- FLRDDFD21>OGFLR,qOR:/104504h3235.33N/03515.39E'016/063/A=001027 !W69! id0ADDFD21 -831fpm -1.2rot 16.2dB -1.3kHz gps5x6 +6.5dBm
+APRS -> # aprsc 2.1.5-g8af3cdc 22 Apr 2021 10:45:19 GMT GLIDERN1 51.178.19.212:14580
+APRS time - system time = -1
+0.600sec:916.200MHz:   1:2:DDFD1D 104521: [ +32.59664, +35.23525]deg    69m  +0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 06x07m Fn:35___ +0.37kHz 50.0/60.5dB/0  0e     0.0km 157.5deg  -2.3deg          
+0.849sec:916.195MHz:   1:2:DDFD1A 104521: [ +32.59659, +35.23464]deg    81m  +0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 04x05m Fn:35f__ -5.31kHz 40.2/51.5dB/0  0e     0.0km 238.2deg +12.7deg          
+0.517sec:916.201MHz:   1:2:DD8E69 104521: [ +32.59680, +35.23461]deg    75m  -0.1m/s   1.2m/s 212.4deg  -2.7deg/s 1m1 05x05m Fn:35___ +0.51kHz 37.5/48.0dB/0  0e     0.0km 270.0deg  +6.2deg          
+0.885sec:916.199MHz:   2:2:DDFD21 104521: [ +32.59388, +35.25591]deg   218m  -5.4m/s  32.2m/s 344.7deg  -0.9deg/s 2m5 05x06m Fn:35f__ -1.20kHz 26.8/37.5dB/0  0e     2.0km 099.2deg  +4.2deg          
+0.152sec:916.199MHz:   2:2:DDFD21 104521: [ +32.59388, +35.25591]deg   218m  -5.4m/s  32.2m/s 344.7deg  -0.9deg/s 2m5 05x06m Fn:35f__ -1.18kHz 27.2/37.5dB/0  0e     2.0km 099.2deg  +4.2deg          
+0.462sec:916.196MHz:   1:2:DD8E8B 104521: [ +32.57709, +35.23183]deg   634m  -1.7m/s  22.1m/s 222.4deg +11.9deg/s 1m4 04x05m Fn:35___ -4.32kHz 19.8/30.5dB/0  0e     2.2km 187.8deg +14.1deg    !     
+APRS <- FLRDD8E69>OGFLR,qOR:/104521h3235.80N/03514.07E'212/002/A=000246 !W76! id06DD8E69 -019fpm -0.9rot 37.5dB +0.5kHz gps5x5
+APRS <- FLRDD8E8B>OGFLR,qOR:/104521h3234.62N/03513.90E'222/042/A=002080 !W59! id06DD8E8B -336fpm +4.0rot 19.8dB -4.3kHz gps4x5
+APRS <- FLRDDFD1A>OGFLR,qOR:/104521h3235.79N/03514.07E'000/000/A=000266 !W58! id06DDFD1A +020fpm +0.0rot 40.2dB -5.3kHz gps4x5
+APRS <- FLRDDFD1D>OGFLR,qOR:/104521h3235.79N/03514.11E'000/000/A=000226 !W85! id06DDFD1D +020fpm +0.0rot 50.0dB +0.4kHz gps6x7
+APRS <- FLRDDFD21>OGFLR,qOR:/104521h3235.63N/03515.35E'345/062/A=000715 !W24! id0ADDFD21 -1068fpm -0.3rot 27.2dB -1.2kHz gps5x6
+0.522sec:916.200MHz:   1:2:DDFD1D 104527: [ +32.59664, +35.23526]deg    67m  -0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 06x06m Fn:35f__ +0.36kHz 50.8/60.0dB/0  0e     0.0km 130.8deg  -6.7deg          
+0.939sec:916.195MHz:   1:2:DDFD1A 104527: [ +32.59659, +35.23464]deg    81m  +0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 04x05m Fn:35_o_ -5.32kHz 41.5/52.0dB/0  0e     0.0km 238.2deg +12.7deg          
+0.812sec:916.201MHz:   1:2:DD8E69 104527: [ +32.59672, +35.23459]deg    75m  +0.1m/s   1.2m/s 202.3deg  -2.8deg/s 1m1 05x05m Fn:35_o_ +0.51kHz 41.2/50.5dB/0  0e     0.0km 258.8deg  +5.9deg          
+0.121sec:916.199MHz:   2:2:DDFD21 104527: [ +32.59551, +35.25532]deg   190m  -4.4m/s  30.8m/s 337.7deg  -4.5deg/s 2m5 05x06m Fn:35_o_ -1.17kHz 28.2/38.0dB/0  0e     1.9km 094.0deg  +3.5deg          
+0.160sec:916.196MHz:   1:2:DD8E8B 104527: [ +32.57739, +35.23076]deg   627m  +0.5m/s  19.0m/s 348.0deg +16.7deg/s 1m4 04x05m Fn:35_o_ -4.26kHz 15.8/24.5dB/0  0e     2.2km 190.4deg +14.0deg    !     
+APRS <- FLRDD8E8B>OGFLR,qOR:/104527h3234.64N/03513.84E'348/036/A=002057 !W35! id06DD8E8B +099fpm +5.6rot 15.8dB -4.3kHz gps4x5
+APRS <- FLRDDFD1D>OGFLR,qOR:/104527h3235.79N/03514.11E'000/000/A=000220 !W85! id06DDFD1D -019fpm +0.0rot 50.8dB +0.4kHz gps6x6
+APRS <- FLRDDFD21>OGFLR,qOR:/104527h3235.73N/03515.31E'338/059/A=000623 !W09! id0ADDFD21 -870fpm -1.5rot 28.2dB -1.2kHz gps5x6
+0.070sec:916.200MHz:   1:2:DDFD1D 104535: [ +32.59662, +35.23528]deg    63m  -0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 06x06m Fn:35f__ +0.36kHz 50.8/61.5dB/0  0e     0.0km 130.8deg -14.9deg          
+0.772sec:916.195MHz:   1:2:DDFD1A 104535: [ +32.59659, +35.23464]deg    81m  +0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 04x05m Fn:35___ -5.30kHz 41.2/52.0dB/0  0e     0.0km 238.2deg +12.7deg          
+0.593sec:916.200MHz:   1:2:DD8E69 104535: [ +32.59666, +35.23458]deg    74m  +0.0m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 05x05m Fn:35___ +0.50kHz 39.2/50.5dB/0  0e     0.1km 248.2deg  +4.4deg          
+0.763sec:916.199MHz:   2:2:DDFD21 104535: [ +32.59672, +35.25320]deg   162m  -2.4m/s  32.2m/s 281.0deg  -5.4deg/s 2m5 05x06m Fn:35___ -1.13kHz 22.0/32.0dB/0  0e     1.7km 090.3deg  +3.1deg    !     
+0.054sec:916.196MHz:   1:2:DD8E8B 104535: [ +32.57788, +35.23263]deg   636m  -0.4m/s  31.0m/s 120.0deg  +9.4deg/s 1m4 04x05m Fn:35f__ -4.29kHz 14.2/25.5dB/0  0e     2.1km 186.0deg +14.8deg    !     
+APRS <- FLRDD8E8B>OGFLR,qOR:/104535h3234.67N/03513.95E'120/060/A=002087 !W27! id06DD8E8B -078fpm +3.1rot 14.2dB -4.3kHz gps4x5
+APRS <- FLRDDFD1D>OGFLR,qOR:/104535h3235.79N/03514.11E'000/000/A=000207 !W76! id06DDFD1D -019fpm +0.0rot 50.8dB +0.4kHz gps6x6
+APRS <- FLRDDFD21>OGFLR,qOR:/104535h3235.80N/03515.19E'281/062/A=000532 !W31! id0ADDFD21 -474fpm -1.8rot 22.0dB -1.1kHz gps5x6
+APRS -> # aprsc 2.1.5-g8af3cdc 22 Apr 2021 10:45:39 GMT GLIDERN1 51.178.19.212:14580
+APRS time - system time = -1
+0.086sec:916.200MHz:   1:2:DDFD1D 104546: [ +32.59665, +35.23528]deg    62m  -0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 07x06m Fn:35f__ +0.39kHz 50.2/60.5dB/0  0e     0.0km 130.8deg -18.3deg          
+0.501sec:916.195MHz:   1:2:DDFD1A 104546: [ +32.59659, +35.23464]deg    81m  +0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 04x05m Fn:35___ -5.33kHz 41.2/52.0dB/0  0e     0.0km 238.2deg +12.7deg          
+0.662sec:916.201MHz:   1:2:DD8E69 104546: [ +32.59666, +35.23458]deg    74m  -0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 05x05m Fn:35___ +0.54kHz 40.2/50.0dB/0  0e     0.1km 248.2deg  +4.4deg          
+0.754sec:916.199MHz:   2:2:DDFD21 104546: [ +32.59675, +35.24945]deg   132m  -1.4m/s  31.0m/s 271.8deg  -0.5deg/s 2m5 05x06m Fn:35___ -1.18kHz 19.5/30.0dB/0  0e     1.3km 090.0deg  +2.6deg          
+0.948sec:916.196MHz:   1:2:DD8E8B 104546: [ +32.57625, +35.23192]deg   626m  +0.3m/s  17.4m/s 310.0deg +16.0deg/s 1m4 04x05m Fn:35f__ -4.27kHz 13.8/25.5dB/0  0e     2.3km 187.3deg +13.4deg    !     
+APRS <- FLRDD8E69>OGFLR,qOR:/104546h3235.79N/03514.07E'000/000/A=000243 !W95! id06DD8E69 -019fpm +0.0rot 40.2dB +0.5kHz gps5x5
+APRS <- FLRDD8E8B>OGFLR,qOR:/104546h3234.57N/03513.91E'310/033/A=002054 !W45! id06DD8E8B +059fpm +5.3rot 13.8dB -4.3kHz gps4x5
+APRS <- FLRDDFD1A>OGFLR,qOR:/104546h3235.79N/03514.07E'000/000/A=000266 !W58! id06DDFD1A +020fpm +0.0rot 41.2dB -5.3kHz gps4x5
+APRS <- FLRDDFD21>OGFLR,qOR:/104546h3235.80N/03514.96E'272/060/A=000433 !W57! id0ADDFD21 -276fpm -0.2rot 19.5dB -1.2kHz gps5x6
+APRS -> # aprsc 2.1.5-g8af3cdc 22 Apr 2021 10:45:59 GMT GLIDERN1 51.178.19.212:14580
+APRS time - system time = -1
+0.076sec:916.200MHz:   1:2:DDFD1D 104616: [ +32.59664, +35.23524]deg    71m  -0.2m/s   0.2m/s 180.0deg  +0.0deg/s 1m1 05x05m Fn:35f__ +0.36kHz 48.0/58.5dB/0  0e     0.0km 157.5deg  +2.4deg          
+0.838sec:916.195MHz:   1:2:DDFD1A 104616: [ +32.59661, +35.23464]deg    80m  +0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 04x05m Fn:35f__ -5.44kHz 38.5/48.0dB/0  0e     0.0km 248.2deg +11.8deg          
+0.589sec:916.201MHz:   1:2:DD8E69 104616: [ +32.59670, +35.23455]deg    76m  -0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 05x05m Fn:35___ +0.52kHz 35.0/45.5dB/0  0e     0.1km 260.7deg  +6.4deg          
+0.484sec:916.199MHz:   2:2:DDFD21 104616: [ +32.59696, +35.24007]deg    76m  -1.0m/s  26.0m/s 270.9deg  +1.5deg/s 2m5 05x06m Fn:35___ -1.03kHz 19.8/29.0dB/0  0e     0.5km 088.1deg  +0.7deg          
+0.549sec:916.196MHz:   1:2:DD8E8B 104616: [ +32.57683, +35.23317]deg   644m  +3.2m/s  27.8m/s 055.6deg +15.5deg/s 1m4 04x05m Fn:35___ -4.26kHz 14.2/24.0dB/0  0e     2.2km 184.5deg +14.3deg    !     
+APRS <- FLRDD8E69>OGFLR,qOR:/104616h3235.80N/03514.07E'000/000/A=000249 !W22! id06DD8E69 -019fpm +0.0rot 35.0dB +0.5kHz gps5x5
+APRS <- FLRDD8E8B>OGFLR,qOR:/104616h3234.60N/03513.99E'056/054/A=002113 !W90! id06DD8E8B +634fpm +5.2rot 14.2dB -4.3kHz gps4x5
+APRS <- FLRDDFD1A>OGFLR,qOR:/104616h3235.79N/03514.07E'000/000/A=000263 !W68! id06DDFD1A +020fpm +0.0rot 38.5dB -5.4kHz gps4x5
+APRS <- FLRDDFD1D>OGFLR,qOR:/104616h3235.79N/03514.11E'180/000/A=000233 !W84! id06DDFD1D -039fpm +0.0rot 48.0dB +0.4kHz gps5x5
+APRS <- FLRDDFD21>OGFLR,qOR:/104616h3235.81N/03514.40E'271/050/A=000249 !W73! id0ADDFD21 -197fpm +0.5rot 19.8dB -1.0kHz gps5x6
+APRS -> # aprsc 2.1.5-g8af3cdc 22 Apr 2021 10:46:19 GMT GLIDERN1 51.178.19.212:14580
+APRS time - system time = -1
+0.606sec:916.200MHz:   1:2:DDFD1D 104620: [ +32.59664, +35.23524]deg    72m  -0.2m/s   0.2m/s 180.0deg  +0.0deg/s 1m1 05x05m Fn:35_o_ +0.36kHz 53.0/63.0dB/0  0e     0.0km 157.5deg  +4.8deg          
+0.967sec:916.195MHz:   1:2:DDFD1A 104620: [ +32.59661, +35.23464]deg    80m  +0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 04x05m Fn:35___ -5.42kHz 43.2/53.5dB/0  0e     0.0km 248.2deg +11.8deg          
+0.536sec:916.200MHz:   1:2:DD8E69 104620: [ +32.59670, +35.23456]deg    75m  -0.3m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 05x05m Fn:35_o_ +0.49kHz 38.5/48.5dB/0  0e     0.1km 260.7deg  +5.5deg          
+0.794sec:916.199MHz:   2:2:DDFD21 104620: [ +32.59698, +35.23900]deg    74m  -0.5m/s  23.5m/s 271.3deg  -1.2deg/s 2m5 05x06m Fn:35_o_ -1.10kHz 18.2/26.5dB/0  0e     0.4km 087.5deg  +0.6deg          
+0.530sec:916.196MHz:   1:2:DD8E8B 104620: [ +32.57667, +35.23454]deg   652m  -0.2m/s  33.4m/s 123.3deg +10.2deg/s 1m4 04x05m Fn:35_o_ -4.31kHz 18.5/26.0dB/0  0e     2.2km 181.2deg +14.4deg    !     
+APRS <- FLRDD8E8B>OGFLR,qOR:/104620h3234.60N/03514.07E'123/064/A=002139 !W02! id06DD8E8B -039fpm +3.4rot 18.5dB -4.3kHz gps4x5
+APRS <- FLRDDFD21>OGFLR,qOR:/104620h3235.81N/03514.34E'271/045/A=000243 !W80! id0ADDFD21 -098fpm -0.4rot 18.2dB -1.1kHz gps5x6
+APRS -> # aprsc 2.1.5-g8af3cdc 22 Apr 2021 10:46:39 GMT GLIDERN1 51.178.19.212:14580
+APRS time - system time = -1
+0.689sec:916.200MHz:   1:2:DDFD1D 104648: [ +32.59658, +35.23528]deg    69m  -0.1m/s   0.2m/s 180.0deg  +0.0deg/s 1m1 05x05m Fn:35___ +0.25kHz 50.5/60.0dB/0  0e     0.0km 143.6deg  -1.8deg          
+0.642sec:916.201MHz:   1:2:DD8E69 104648: [ +32.59664, +35.23462]deg    69m  -0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 05x05m Fn:35___ +0.53kHz 43.5/54.0dB/0  0e     0.0km 248.2deg  -1.2deg          
+0.613sec:916.195MHz:   1:2:DDFD1A 104648: [ +32.59661, +35.23464]deg    79m  +0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 04x05m Fn:35___ -5.46kHz 44.0/54.0dB/0  0e     0.0km 248.2deg +10.6deg          
+0.121sec:916.199MHz:   2:2:DDFD21 104648: [ +32.59703, +35.23472]deg    74m  +0.1m/s  10.5m/s 272.7deg  -0.7deg/s 2m5 05x06m Fn:35f__ -1.18kHz 41.5/52.0dB/0  0e     0.0km 303.7deg  +5.3deg          
+0.747sec:916.196MHz:   1:2:DD8E8B 104648: [ +32.57367, +35.23609]deg   657m  -1.4m/s  22.8m/s 216.4deg +10.9deg/s 1m4 04x05m Fn:35___ -4.34kHz 20.8/31.5dB/0  0e     2.6km 178.1deg +12.7deg    !     
+APRS <- FLRDD8E69>OGFLR,qOR:/104648h3235.79N/03514.07E'000/000/A=000226 !W87! id06DD8E69 -019fpm +0.0rot 43.5dB +0.5kHz gps5x5
+APRS <- FLRDD8E8B>OGFLR,qOR:/104648h3234.42N/03514.16E'216/044/A=002156 !W05! id06DD8E8B -276fpm +3.6rot 20.8dB -4.3kHz gps4x5 +10.9dBm
+APRS <- FLRDDFD1A>OGFLR,qOR:/104648h3235.79N/03514.07E'000/000/A=000259 !W68! id06DDFD1A +020fpm +0.0rot 44.0dB -5.5kHz gps4x5
+APRS <- FLRDDFD1D>OGFLR,qOR:/104648h3235.79N/03514.11E'180/000/A=000226 !W46! id06DDFD1D -019fpm +0.0rot 50.5dB +0.2kHz gps5x5
+APRS <- FLRDDFD21>OGFLR,qOR:/104648h3235.82N/03514.08E'273/020/A=000243 !W13! id0ADDFD21 +020fpm -0.2rot 41.5dB -1.2kHz gps5x6
+0.524sec:916.200MHz:   1:2:DDFD1D 104654: [ +32.59659, +35.23529]deg    71m  -0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 05x05m Fn:35_o_ +0.37kHz 46.5/57.0dB/0  0e     0.0km 143.6deg  +1.8deg          
+0.924sec:916.195MHz:   1:2:DDFD1A 104654: [ +32.59661, +35.23465]deg    78m  +0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 04x05m Fn:35___ -5.47kHz 37.5/48.5dB/0  0e     0.0km 248.2deg  +9.5deg          
+0.801sec:916.201MHz:   1:2:DD8E69 104654: [ +32.59664, +35.23461]deg    68m  -0.1m/s   0.0m/s 000.0deg  +0.0deg/s 1m1 05x05m Fn:35___ +0.55kHz 35.2/46.0dB/0  0e     0.0km 248.2deg  -2.3deg          
+0.081sec:916.199MHz:   2:2:DDFD21 104654: [ +32.59714, +35.23428]deg    75m  -0.1m/s   4.7m/s 301.8deg +14.5deg/s 2m5 05x06m Fn:35___ -1.17kHz 19.8/30.5dB/0  0e     0.1km 292.5deg  +3.3deg          
+0.491sec:916.196MHz:   1:2:DD8E8B 104654: [ +32.57364, +35.23488]deg   644m  -2.5m/s  19.2m/s 302.9deg  +2.9deg/s 1m5 04x05m Fn:35_o_ -4.27kHz  9.2/19.5dB/2  3e     2.6km 180.3deg +12.4deg          
+APRS <- FLRDD8E8B>OGFLR,qOR:/104654h3234.41N/03514.09E'303/037/A=002113 !W82! id06DD8E8B -494fpm +1.0rot 9.2dB 3e -4.3kHz gps4x5
+APRS <- FLRDDFD1D>OGFLR,qOR:/104654h3235.79N/03514.11E'000/000/A=000233 !W57! id06DDFD1D -019fpm +0.0rot 46.5dB +0.4kHz gps5x5
+APRS <- FLRDDFD21>OGFLR,qOR:/104654h3235.82N/03514.05E'302/009/A=000246 !W86! id0ADDFD21 -019fpm +4.8rot 19.8dB -1.2kHz gps5x6
