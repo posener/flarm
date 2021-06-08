@@ -49,6 +49,13 @@ type StationInfo struct {
 	IDMap map[string]string
 }
 
+func (si StationInfo) MapID(id string) string {
+	if mapped := si.IDMap[id]; mapped != "" {
+		return mapped
+	}
+	return id
+}
+
 // Port is a connection to a FLARM serial port.
 type Port struct {
 	scanner *bufio.Scanner
@@ -147,7 +154,9 @@ type Data struct {
 	// Ground speed in m/s
 	GroundSpeed int64
 	// Climb rate in m/s
-	Climb      float64
+	Climb float64
+	// Change to direction in deg/s
+	TurnRate   float64
 	Type       string
 	Time       time.Time
 	AlarmLevel int
@@ -156,14 +165,10 @@ type Data struct {
 func (o *Data) TableName() string { return "logs" }
 
 func (s StationInfo) processPFLAA(e TypePFLAA) *Data {
-	id := e.ID
+	id := s.MapID(e.ID)
 	if id == "" {
 		log.Println("Ignoring empty ID entry.")
 		return nil
-	}
-	// Apply ID mapping.
-	if mappedID := s.IDMap[id]; mappedID != "" {
-		id = mappedID
 	}
 	lat, long := add(s.Lat, s.Long, float64(e.RelativeNorth), float64(e.RelativeEast))
 	return &Data{

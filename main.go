@@ -27,9 +27,13 @@ import (
 )
 
 var (
-	port       = flag.String("port", "", "Serial port path.")
-	baudRate   = flag.Uint("baud_rate", 57600, "Serial port baud rate.")
-	remote     = flag.String("remote", "", "Remote flarm server to connect to.")
+	port     = flag.String("port", "", "Serial port path to connect to.")
+	baudRate = flag.Uint("baud_rate", 57600, "Serial port baud rate.")
+
+	remote = flag.String("remote", "", "Remote flarm server to connect to.")
+
+	ogn = flag.String("ogn", "", "OGN address to connect to")
+
 	addr       = flag.String("addr", ":8080", "Address for HTTP serving.")
 	configPath = flag.String("config", "config.json", "Configuration")
 )
@@ -223,12 +227,28 @@ func loadConfig() {
 
 func getFlarm(station flarmport.StationInfo) (flarmport.Reader, error) {
 	switch {
-	case *port != "" && *remote != "":
-		log.Fatal("Usage: can't provide both 'port' and 'remote'.")
+	case countInputSelection() > 1:
+		log.Fatal("Usage: can't use multiple sources. Must select one of 'port', 'ogn' or 'remote'.")
 	case *port != "":
 		return flarmport.Open(*port, *baudRate, station)
+	case *ogn != "":
+		return flarmport.OpenOGN(*ogn, station)
 	case *remote != "":
 		return flarmport.Remote(*remote)
 	}
 	return nil, fmt.Errorf("usage: must provide 'port' or 'remote'")
+}
+
+func countInputSelection() int {
+	s := 0
+	if *port != "" {
+		s++
+	}
+	if *ogn != "" {
+		s++
+	}
+	if *remote != "" {
+		s++
+	}
+	return s
 }
