@@ -34,7 +34,7 @@ var (
 
 	ogn = flag.String("ogn", "", "OGN address to connect to")
 
-	addr       = flag.String("addr", ":8080", "Address for HTTP serving.")
+	addr       = flag.String("addr", ":8082", "Address for HTTP serving.")
 	configPath = flag.String("config", "config.json", "Configuration")
 )
 
